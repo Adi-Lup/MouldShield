@@ -1,0 +1,38 @@
+# ----- Secrets (never commit these) -----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+certs/
+device/config.py
+
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ----- Local databases -----
+*.db
+*.sqlite
+*.sqlite3
+
+# ----- Editors and OS -----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ----- Generated files -----
+reports/
+*.log
