@@ -87,7 +87,7 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 | Name | Role |
 |------|------|
 | Adrian Lupescu | Scrum Master, developer (cloud and security) |
-| Sergiu Ghirnita | Developer (back-end and AI) |
+| Sergiu Girnita | Developer (back-end and AI) |
 | Claudiu Stratulat | UI/UX Designer, developer (front-end and testing) |
 
 ## How we work

@@ -10,7 +10,7 @@
 | Name | Present | Notes |
 |------|---------|-------|
 | Adrian Lupescu | Yes / No | |
-| Sergiu Ghirnita | Yes / No | |
+| Sergiu Girnita | Yes / No | |
 | Claudiu Stratulat | Yes / No | |
 
 ## Updates
