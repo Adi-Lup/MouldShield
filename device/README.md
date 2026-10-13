@@ -1,6 +1,6 @@
 # Device (M5StickS3 + ENV III)
 
-This folder has the code that runs on the MouldShield device. The device measures temperature and humidity in a room and will send the readings to our back-end.
+This folder has the code that runs on the MouldShield device. The device measures temperature and humidity in a room and sends the readings to AWS IoT Core.
 
 Task on the Scrum board: **T08 Set up the device and read the sensor** (issue #8).
 
@@ -60,6 +60,38 @@ The start screen is separate from the main program, so it does not change when s
 | 8b | Claudiu | Plug in the ENV III sensor and show temperature and humidity on the screen |
 | 8c | Sergiu | Turn the readings into JSON in the same format that `POST /readings` will receive |
 
+## Connection to AWS IoT Core (T11)
+
+Task on the Scrum board: **T11 Connect the device to AWS IoT Core** (issue #11). Connection working since 13 October 2026.
+
+| File | What it does |
+|------|--------------|
+| `test_iot_from_laptop.py` | Tests the IoT policy from a laptop: one message on our own topic (accepted) and one on another topic (refused) |
+| `upload_certs.py` | Copies the certificate files from the laptop to `/flash/certs` on the device over USB |
+| `test_iot_from_device.py` | Sends a test message from the device to AWS IoT Core |
+
+How it works:
+- The device is the Thing `mouldshield-01` in AWS IoT Core (region eu-west-2, London).
+- It connects with MQTT over TLS on port 8883, using its own X.509 certificate and private key. The server certificate is fully checked (`CERT_REQUIRED`) against Amazon Root CA 1.
+- It publishes to the topic `mouldshield/mouldshield-01/readings` (project / device / data type).
+- The IoT policy `mouldshield-device-policy` only lets this device connect as `mouldshield-01` and publish on its own topic (least privilege). Our negative test from the laptop showed that AWS refuses any other topic.
+
+### Certificates
+
+The certificate files are kept outside the repository and are never committed (`.gitignore` blocks `*.pem`, `*.key`, `*.crt` and `certs/`). They are copied to the device only over the USB cable with `upload_certs.py`, so the private key never goes through UiFlow2 or any cloud service. Close UiFlow2 in the browser before running the script, so the USB port is free.
+
+### Firmware clock workaround
+
+On UiFlow2 v2.5.3 (MicroPython v1.27.0) the TLS library reads the clock 30 years ahead of the real device clock:
+- with the correct time, TLS said the AWS certificate "has expired";
+- with the clock at 1970, it said the certificate "starts in the future".
+
+We tested this idea by moving the clock back exactly 30 years (946,684,800 seconds) and the connection worked with full certificate checking. So `tls_connect()` moves the clock back only during the TLS handshake and puts the real time back straight away, even if the connection fails. The messages still have the correct UTC timestamp. Every new MQTT connection on the device must use `tls_connect()`.
+
+We reported this to M5Stack on 13 October 2026: [m5stack/uiflow-micropython#120](https://github.com/m5stack/uiflow-micropython/issues/120). The offset is exactly the difference between the 1970 and 2000 epochs, so it may be an epoch mismatch inside the firmware.
+
+If the firmware is updated, check again whether this workaround is still needed (part of T21, security check).
+
 ## Next step
 
-T11: connect the device to AWS IoT Core with MQTT and its own certificate. Certificates and keys must never be uploaded to GitHub.
+Join the sensor reading (8b) and the JSON message (8c) with the MQTT publish, so the device sends real readings to AWS IoT Core every few minutes.
