@@ -4,7 +4,7 @@
 
 # MouldShield
 
-Early warning for damp and mould in rented homes, with evidence that cannot be faked.
+Early warning for damp and mould in rented homes, with tamper-evident readings.
 
 CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
 
@@ -45,7 +45,7 @@ Web dashboard (laptop and phones, QR code)  --->  PDF report + letter to landlor
 | `backend/` | FastAPI app, database, risk calculation, hash chain, AI and forecast logic, data simulator |
 | `device/` | MicroPython code for the M5StickS3 (UiFlow2 firmware) |
 | `dashboard/` | Web dashboard and mobile page |
-| `docs/` | Stand-up records, diagrams (Use Case, DFD), test plan and results |
+| `docs/` | Product backlog, stand-up records, sprint reviews, diagrams (Use Case, DFD), test plan and results |
 
 ## Tech stack
 
@@ -92,12 +92,13 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 
 ## How we work
 
-- Tasks live on the GitHub Projects board: To do, In progress, Done.
+- Tasks live on the GitHub Projects board: To do, In progress, Done. Each feature task has a MoSCoW label (Must or Should) and a Sprint value.
+- The product backlog (user stories, MoSCoW, sprint goals and Definition of Done) is in `docs/agile/product_backlog.md`, and the risk register in `docs/agile/risk_register.md`.
 - Each task is done on its own branch, for example `task-7-fastapi`.
 - Changes go into `main` through a pull request, checked by one teammate.
 - Commit messages are short and mention the task number, for example `#7 add POST /readings`.
 - A task is Done when the code is on GitHub, tested, and checked by one teammate.
-- Stand-up notes (attendance and decisions) are kept in `docs/standups/`.
+- Stand-up notes (attendance and decisions), sprint reviews and retrospectives are kept in `docs/standups/`.
 
 ## Security
 
