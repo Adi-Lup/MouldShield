@@ -39,6 +39,19 @@ We use the UiFlow2 web editor, so there is nothing to install. Use Chrome or Edg
 
 Do not share the Access Code in screenshots, because anyone with the code can send programs to the device.
 
+## Boot splash screen
+
+When the device is switched on, it shows "MouldShield", "prototype v0.1" and "by THE SHARKS" for 3 seconds, and then the normal UiFlow2 menu with WiFi, server status and Access Code.
+
+| File | What it does |
+|------|--------------|
+| `splash.py` | The start screen. On the device it is saved as `/flash/splash.py` |
+| `install_splash.py` | Run once from UiFlow2 to install the start screen on the device |
+
+How it works: every time the device starts, it runs `/flash/boot.py`, which then shows the UiFlow2 menu. The installer adds a few lines at the top of `boot.py` that call `splash.show()`. These lines are inside `try/except`, so if the start screen ever fails, the device still starts normally. A copy of the original file is kept on the device as `/flash/boot_backup.py`.
+
+The start screen is separate from the main program, so it does not change when someone runs a new program from UiFlow2. Flashing the firmware again removes it, so run `install_splash.py` again after that.
+
 ## Who does what (T08)
 
 | Part | Who | What |
