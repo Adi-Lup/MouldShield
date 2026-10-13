@@ -23,20 +23,11 @@ CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
 
 ## How it works
 
-```
-Device (M5StickS3 + ENV III)
-        |  Wi-Fi, MQTT
-        v
-AWS IoT Core
-        |
-        v
-FastAPI back-end + SQL database (on AWS)  <---  Open-Meteo forecast
-        |                    ^
-        |                    |
-        |              Amazon Bedrock (explanation, letter, photo description)
-        v
-Web dashboard (laptop and phones, QR code)  --->  PDF report + letter to landlord
-```
+<p align="center">
+  <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; the web dashboard and the PDF report show the results" width="900">
+</p>
+
+The solid green arrow is working now: the device sends test messages to AWS IoT Core over TLS with its own X.509 certificate (13 October 2026). The dashed parts are planned for Sprints 2 and 3. The diagram is updated at the end of every sprint.
 
 ## Repository structure
 
