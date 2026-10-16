@@ -1,6 +1,6 @@
 # Product backlog and sprint plan
 
-MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 13 October 2026.
+MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 16 October 2026.
 
 The backlog is ordered by value, and we prioritise it with MoSCoW, as we said in our proposal and in Formative 1. The team orders it together (we have no separate Product Owner). It changes when we learn something new, so this file and the Scrum board are updated every week.
 
@@ -56,3 +56,5 @@ A task is Done when:
 | 13 Oct 2026 | Flow changed to device, AWS IoT Core, subscriber script, FastAPI | The device can use its own certificate with MQTT over TLS |
 | 13 Oct 2026 | S3 Object Lock anchoring moved to "Will not have (for now)" | Not needed for a student prototype; written up as future work |
 | 13 Oct 2026 | Deploy on AWS (T16) moved from Sprint 2 to Sprint 3 | The server costs credit per hour, so we start it only when the back-end is ready |
+| 15 Oct 2026 | The risk levels are called LOW, MODERATE and HIGH everywhere; T10 renamed to "(low, moderate, high)" | Team decision in class, so the device, the dashboard and the report use the same words |
+| 16 Oct 2026 | New device screen design approved by the team: a blue status bar at the top with a cloud icon (SYNCED or OFFLINE) and an arrow above the current risk box | The tenant can see if the last reading reached AWS, and the arrow is clearer than the small marker. The arrow goes in with the T08b screen code; the status bar is planned for Sprint 2, after the device to AWS connection (T11) is joined with the sensor code |
