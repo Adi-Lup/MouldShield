@@ -12,7 +12,7 @@ GREEN = 0x008000
 AMBER = 0xFFBF00
 RED = 0xB00020
 
-# Status bar colours (from the MouldShield logo).
+# Status bar colours (from the MouldShield logo)..
 BAR_BLUE = 0x1F67C2
 TICK_GREEN = 0x13866B
 X_RED = 0xC8001E
@@ -23,7 +23,7 @@ FLASH_INTERVAL = 500
 
 # Provisional humidity limits (% RH) from our T04 research
 # (GOV.UK damp and mould guidance and HHSRS guidance).
-# They will be checked again when we write the risk calculation (T10).
+# They will be checked again when we write the risk calculation (T10)..
 AMBER_LIMIT = 60
 RED_LIMIT = 70
 ERROR_RETRY = 5000
