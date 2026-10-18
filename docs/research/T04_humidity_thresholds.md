@@ -1,0 +1,4 @@
+For T04, I researched humidity thresholds using [Scottish Government guidance] [GOV.UK damp and mould guidance]) and [HHSRS guidance]). The evidence supports a recommended indoor range of 40–60% RH and identifies prolonged humidity around 70% or above as favourable to mould growth. I proposed prototype warning bands of green ≤60%, amber >60–70%, and red >70%. These are screening alerts; duration, temperature and surface conditions also affect mould risk.
+https://www.gov.scot/publications/building-standards-technical-handbook-2022-domestic/3-environment/3-15-condensation/
+https://www.gov.uk/government/publications/damp-and-mould-understanding-and-addressing-the-health-risks-for-rented-housing-providers/understanding-and-addressing-the-health-risks-of-damp-and-mould-in-the-home--2
+https://www.gov.uk/government/publications/housing-health-and-safety-rating-system-hhsrs-operating-guidance
