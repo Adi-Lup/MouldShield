@@ -92,6 +92,31 @@ We reported this to M5Stack on 13 October 2026: [m5stack/uiflow-micropython#120]
 
 If the firmware is updated, check again whether this workaround is still needed (part of T21, security check).
 
+## The full device program (T11, 18 October 2026)
+
+`mouldshield_device.py` joins the three parts of T08 with the AWS connection:
+
+- the sensor screen from Claudiu (8b, `sensor_screen.py`),
+- the reading as JSON from Sergiu (8c, `reading_json.py`, same field names as `POST /readings`),
+- the MQTT publish over TLS from Adrian (T11, with `tls_connect()`).
+
+Every 15 seconds the device reads the sensor, sends the exact values to AWS IoT Core on `mouldshield/mouldshield-01/readings` (QoS 1), and then draws the screen. The status bar at the top shows **SYNCED** when the reading reached AWS and **OFFLINE** when it did not.
+
+How to run it: open UiFlow2 with Connection USB, paste the file in the Python tab (Custom Edit), press **Ctrl+S to save**, then Run. UiFlow2 runs the saved code, not what is on the screen.
+
+### Tests on the device (18 October 2026)
+
+| Test | Result |
+|------|--------|
+| Normal readings | One message in the AWS MQTT test client every 15 seconds, with the correct UTC time |
+| Breath on the sensor | Humidity went from about 65% to 80.1%; the screen turned red and the reading reached AWS about 3 seconds after it was taken |
+| Hotspot turned off | The screen showed OFFLINE and kept updating; the console showed "NOT sent" |
+| Hotspot turned back on | The device joined the Wi-Fi again by itself and the next reading was sent (SYNCED) |
+
+### Problem found in the offline test
+
+The first version froze when the hotspot was turned off. In UiFlow2, `from umqtt import MQTTClient` gives the "robust" client, which retries for ever when the connection is lost and reconnects without our TLS clock workaround, so it can never get back. We now use `umqtt.simple`, a 10 second network timeout and a Wi-Fi check before each send, so a lost connection only gives OFFLINE.
+
 ## Next step
 
-Join the sensor reading (8b) and the JSON message (8c) with the MQTT publish, so the device sends real readings to AWS IoT Core every few minutes.
+Sprint 2: a small subscriber script that receives the readings from AWS IoT Core and saves them with `POST /readings`, so real readings reach the database and the dashboard.
