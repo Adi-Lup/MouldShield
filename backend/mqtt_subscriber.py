@@ -44,7 +44,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
         return
     # We subscribe here, so after a reconnect the subscription is made again
     client.subscribe(TOPIC, qos=1)
-    print("Subscribed to", TOPIC)
+    print("Subscription requested for", TOPIC)
 
 
 def on_subscribe(client, userdata, mid, reason_codes, properties):
