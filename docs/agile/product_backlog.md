@@ -1,6 +1,6 @@
 # Product backlog and sprint plan
 
-MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 16 October 2026.
+MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 19 October 2026.
 
 The backlog is ordered by value, and we prioritise it with MoSCoW, as we said in our proposal and in Formative 1. The team orders it together (we have no separate Product Owner). It changes when we learn something new, so this file and the Scrum board are updated every week.
 
@@ -12,7 +12,7 @@ On the Scrum board (GitHub Projects) every issue has:
 
 | ID | User story | MoSCoW | Tasks (issues) |
 |----|------------|--------|----------------|
-| US1 | As a tenant, I want to see the temperature, the humidity and a green, amber or red risk level, so that I know when my room is getting too damp. | Must | T04, T05, T06, T07, T08, T10, T11, T14, T16 |
+| US1 | As a tenant, I want to see the temperature, the humidity and a green, amber or red risk level, so that I know when my room is getting too damp. | Must | T04, T05, T06, T07, T08, T10, T11, T14, T16, T27 |
 | US2 | As a tenant, I want my readings to be tamper-evident, so that my landlord can trust that the old data was not changed. | Must | T12 |
 | US3 | As a tenant, I want a simple explanation of the risk in my own language and a draft letter to my landlord, so that I can ask for repairs with clear evidence. | Must | T13, T20 |
 | US4 | As a member of the team, I want realistic test readings when the device is not connected, so that we can build and demo the system without the hardware. | Must | T09 |
@@ -34,7 +34,7 @@ Each sprint is one week. Stand-ups are in class on Thursday and Friday and on Te
 |--------|------|-------------|----------------|
 | Planning | Week 1 (5 to 11 Oct) | Plan agreed | T01, T02, T03 |
 | Sprint 1 | Week 2 (12 to 18 Oct) | First reading saved in the database | T04, T05, T06, T07, T08, T09, T11 |
-| Sprint 2 | Week 3 (19 to 25 Oct) | Working prototype | T10, T12, T13, T14, T15 |
+| Sprint 2 | Week 3 (19 to 25 Oct) | Working prototype | T10, T12, T13, T14, T15, T27 |
 | Sprint 3 | Week 4 (26 Oct to 1 Nov) | All Must features done and on AWS | T16, T17, T18, T19, T20, T21, T22, T23 |
 | Final | Week 5 (2 to 6 Nov) | Live demo at the viva | T24, T25, T26 |
 
@@ -58,3 +58,6 @@ A task is Done when:
 | 13 Oct 2026 | Deploy on AWS (T16) moved from Sprint 2 to Sprint 3 | The server costs credit per hour, so we start it only when the back-end is ready |
 | 15 Oct 2026 | The risk levels are called LOW, MODERATE and HIGH everywhere; T10 renamed to "(low, moderate, high)" | Team decision in class, so the device, the dashboard and the report use the same words |
 | 16 Oct 2026 | New device screen design approved by the team: a blue status bar at the top with a cloud icon (SYNCED or OFFLINE) and an arrow above the current risk box | The tenant can see if the last reading reached AWS, and the arrow is clearer than the small marker. The arrow goes in with the T08b screen code; the status bar is planned for Sprint 2, after the device to AWS connection (T11) is joined with the sensor code |
+| 19 Oct 2026 | New task T27 "Build the MQTT subscriber (AWS IoT Core to POST /readings)" added to Sprint 2 (Adrian, Must, US1) | The device already sends readings to AWS IoT Core; T27 brings them into the back-end database. Agreed at the Sprint 1 review |
+| 19 Oct 2026 | The device status bar (SYNCED or OFFLINE) is done in Sprint 1, not Sprint 2 | It came together with T11, when the AWS connection was joined with the sensor code |
+| 19 Oct 2026 | The dashboard shows the humidity without decimals and uses the team logo; T10 uses the same limits as the device (MODERATE from 60%, HIGH from 70%) | Team decisions at the Sprint 1 review, so the device and the dashboard show the same values |
