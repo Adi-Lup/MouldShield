@@ -10,10 +10,14 @@
 #   python mqtt_subscriber.py
 # Stop it with Ctrl + C.
 #
+# Negative test (a topic that is not in the policy, AWS should refuse the subscription):
+#   python mqtt_subscriber.py mouldshield/other-device/readings
+#
 # The certificate files are NOT in the repo. They stay in C:\Users\<you>\Projects\mouldshield-certs
 
 import json
 import os
+import sys
 from pathlib import Path
 
 import paho.mqtt.client as mqtt
@@ -22,7 +26,8 @@ import requests
 ENDPOINT = "a3vw3358s3u78v-ats.iot.eu-west-2.amazonaws.com"
 PORT = 8883
 CLIENT_ID = "mouldshield-subscriber"
-TOPIC = "mouldshield/mouldshield-01/readings"
+DEFAULT_TOPIC = "mouldshield/mouldshield-01/readings"
+TOPIC = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_TOPIC
 CERTS = Path.home() / "Projects" / "mouldshield-certs"
 
 # The local API by default. On AWS (T16) we only change this setting, not the code.
