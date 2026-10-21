@@ -13,7 +13,7 @@ The first risks come from our proposal and Formative 1. New risks are added when
 | R3 | We fall behind | High | Adrian | We follow MoSCoW and cut from the bottom of the backlog (Should items first). Progress is checked at every sprint review |
 | R6 | A firmware update breaks the TLS clock workaround (found 13 Oct) | Medium | Adrian | We stay on firmware v2.5.3. After any update, we test the AWS connection again (part of T21). Bug reported to M5Stack as [uiflow-micropython#120](https://github.com/m5stack/uiflow-micropython/issues/120) |
 | R7 | The AWS credit runs out, for example if the server is left running | Medium | Adrian | Free plan (cannot be charged), budget alert at $20 a month, and the EC2 server is started only in Sprint 3 |
-| R9 | Readings taken while the connection is down are lost, because the device does not keep them to send later (found in the R8 tests on 21 Oct: 4 to 9 readings lost each time). The same happens if the API is stopped while the subscriber runs | Medium | Adrian | The tenant could have gaps in the evidence. Possible fix: the device keeps the readings it could not send and sends them when the connection is back. To decide with the team |
+| R9 | Readings are lost when part of the system is down. Found in the R8 tests on 21 Oct (4 to 9 readings lost each time the connection dropped) | Low | Adrian | Device side fixed on 21 Oct: the device keeps up to one hour of readings in memory and sends them in order when the connection is back (tested: 4 readings kept during a 1 minute drop, all saved, `GET /verify` OK with 131 readings). Still open: a reading that reaches the subscriber while the API is stopped is lost, and the waiting readings are lost if the device is switched off |
 
 ## Closed risks
 
