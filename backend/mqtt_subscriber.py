@@ -18,6 +18,7 @@
 import json
 import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import paho.mqtt.client as mqtt
@@ -83,8 +84,17 @@ def on_message(client, userdata, message):
         return
 
     if answer.ok:
-        print("Saved", reading["timestamp"], reading["humidity_pct"], "% ->",
-              answer.status_code, answer.json())
+        # Time from the reading on the device to the reading saved in the database.
+        # The device time has whole seconds and both clocks come from the internet,
+        # so the result is only accurate to about one second.
+        saved_at = datetime.now(timezone.utc)
+        try:
+            read_at = datetime.strptime(reading["timestamp"], "%Y-%m-%dT%H:%M:%SZ")
+            delay = "%.1f s" % (saved_at - read_at.replace(tzinfo=timezone.utc)).total_seconds()
+        except ValueError:
+            delay = "unknown"
+        print("Saved", reading["timestamp"], reading["humidity_pct"], "% -> id",
+              answer.json().get("id"), "| device to database:", delay)
     else:
         print("API refused the reading:", answer.status_code, answer.text)
 
