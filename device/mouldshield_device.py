@@ -4,8 +4,10 @@
 #   - the reading as JSON (Sergiu, T08c, device/reading_json.py),
 #   - the connection to AWS IoT Core over TLS (Adrian, T11, device/test_iot_from_device.py).
 # Every reading is shown on the screen and sent to AWS IoT Core on the topic
-# mouldshield/mouldshield-01/readings. The status bar shows SYNCED when the
-# last reading reached AWS and OFFLINE when it did not.
+# mouldshield/mouldshield-01/readings. The status bar shows SYNCED when all
+# readings reached AWS and OFFLINE when some are still waiting to be sent.
+# Readings taken while the connection is down are kept in memory and sent
+# when it comes back (added on 21 Oct 2026 for risk R9).
 # The certificate files must be on the device in /flash/certs (see upload_certs.py).
 # In UiFlow2: paste this file in the Python tab, press Ctrl+S to save, then Run.
 import M5
@@ -59,8 +61,18 @@ AMBER_LIMIT = 60
 RED_LIMIT = 70
 ERROR_RETRY = 5000
 
-# True when the last reading reached AWS IoT Core (set after every send).
+# True when every reading reached AWS IoT Core (set after every send).
 cloud_sent = False
+
+# Readings that could not be sent yet, oldest first (risk R9).
+# 240 readings = 1 hour at one reading every 15 seconds. If the connection
+# is down for longer, the oldest reading is dropped to keep memory safe.
+# The list is in memory only, so it is lost if the device is switched off.
+pending = []
+MAX_PENDING = 240
+# At most 10 old readings are sent per cycle, so catching up after a long
+# gap does not stop the screen and the sensor for too long.
+MAX_SEND_PER_CYCLE = 10
 
 SMALL = None
 HEADING = None
@@ -377,6 +389,19 @@ def send_reading(reading):
         return False
 
 
+def send_pending():
+    # Sends the waiting readings, oldest first, so the database gets them
+    # in the right order for the hash chain. Stops at the first failure
+    # and tries again at the next cycle. Returns True when none are left.
+    sent = 0
+    while pending and sent < MAX_SEND_PER_CYCLE:
+        if not send_reading(pending[0]):
+            return False
+        pending.pop(0)
+        sent += 1
+    return len(pending) == 0
+
+
 def setup():
     global env, SMALL, HEADING, NUMBER_FONTS
 
@@ -455,10 +480,14 @@ def run():
         else:
             level = 0
 
-        # Send the exact values to AWS IoT Core, then show the result
-        # in the status bar (SYNCED or OFFLINE).
+        # Add the exact values to the waiting list, send what we can to
+        # AWS IoT Core, then show the result in the status bar.
         reading = make_reading(temperature, humidity, utc_timestamp())
-        cloud_sent = send_reading(reading)
+        pending.append(reading)
+        if len(pending) > MAX_PENDING:
+            pending.pop(0)
+            print("Waiting list full, oldest reading dropped")
+        cloud_sent = send_pending()
 
         draw_screen(level, temperature, humidity_shown)
 
@@ -468,7 +497,10 @@ def run():
             beep(level)
         previous_level = level
 
-        print(reading, "sent" if cloud_sent else "NOT sent")
+        if cloud_sent:
+            print(reading, "sent")
+        else:
+            print(reading, "NOT sent,", len(pending), "waiting")
 
         last_flash = True
 
