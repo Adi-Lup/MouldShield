@@ -1,6 +1,6 @@
 # Risk register
 
-MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian) and checked at every sprint review. Last updated: 19 October 2026.
+MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian) and checked at every sprint review. Last updated: 21 October 2026.
 
 The first risks come from our proposal and Formative 1. New risks are added when we find them. Closed risks stay in the table, so we can see how they were handled.
 
@@ -13,7 +13,7 @@ The first risks come from our proposal and Formative 1. New risks are added when
 | R3 | We fall behind | High | Adrian | We follow MoSCoW and cut from the bottom of the backlog (Should items first). Progress is checked at every sprint review |
 | R6 | A firmware update breaks the TLS clock workaround (found 13 Oct) | Medium | Adrian | We stay on firmware v2.5.3. After any update, we test the AWS connection again (part of T21). Bug reported to M5Stack as [uiflow-micropython#120](https://github.com/m5stack/uiflow-micropython/issues/120) |
 | R7 | The AWS credit runs out, for example if the server is left running | Medium | Adrian | Free plan (cannot be charged), budget alert at $20 a month, and the EC2 server is started only in Sprint 3 |
-| R8 | The device freezes when the connection drops (found in the offline test on 18 Oct, when the hotspot was turned off) | Low | Adrian | Fixed on 18 Oct: the device now uses `umqtt.simple` with a 10 second timeout and checks the Wi-Fi before sending, so it shows OFFLINE and keeps working. Tested once. We repeat the hotspot test three times before the Sprint 2 review and close the risk if it passes |
+| R9 | Readings taken while the connection is down are lost, because the device does not keep them to send later (found in the R8 tests on 21 Oct: 4 to 9 readings lost each time). The same happens if the API is stopped while the subscriber runs | Medium | Adrian | The tenant could have gaps in the evidence. Possible fix: the device keeps the readings it could not send and sends them when the connection is back. To decide with the team |
 
 ## Closed risks
 
@@ -24,3 +24,4 @@ The first risks come from our proposal and Formative 1. New risks are added when
 | C3 | The device cannot connect to AWS IoT Core ("certificate has expired") | We tested the idea that the firmware reads the clock 30 years ahead, and it was right. Fixed by moving the clock back only during the connection, with full certificate checking kept (see `device/README.md`). Follow-up risk: R6 | 13 Oct 2026 |
 | C4 | The Sprint 1 goal ("first reading saved in the database") is not met | Met: Sergiu built `POST /readings` saving to SQLite, and it works. Agreed at the Sprint 1 review | 19 Oct 2026 |
 | C5 | Sergiu and Claudiu cannot program the device from their own laptops | No longer relevant: Claudiu programmed it over USB from his own laptop, and Sergiu used the device for his part of T08 (T08c). Agreed at the Sprint 1 review | 19 Oct 2026 |
+| C6 | The device freezes when the connection drops (found on 18 Oct) | Fixed on 18 Oct (`umqtt.simple`, 10 second timeout, Wi-Fi check). Tested three times on 21 Oct by turning the hotspot off for 1 to 3 minutes: each time the screen showed OFFLINE straight away and kept working, and the device reconnected by itself within about 20 seconds. `GET /verify` was still OK afterwards | 21 Oct 2026 |
