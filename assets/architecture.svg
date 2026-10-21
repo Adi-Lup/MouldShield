@@ -75,7 +75,8 @@
 
   <!-- EC2 server group -->
   <rect x="290" y="250" width="520" height="220" rx="14" fill="#F3F6FA" stroke="#13294B" stroke-width="1.5"/>
-  <text x="306" y="274" font-size="13" font-weight="700" fill="#13294B">EC2 server</text>
+  <text x="392" y="274" font-size="13" font-weight="700" fill="#13294B">Back-end server</text>
+  <text x="796" y="430" font-size="11" fill="#4A5868" text-anchor="end">Runs on a laptop now, moves to EC2 in Sprint 3</text>
 
   <!-- Subscriber -->
   <g>
@@ -101,7 +102,7 @@
     <text x="740" y="367" font-size="11" fill="#4A5868" text-anchor="middle">readings +</text>
     <text x="740" y="382" font-size="11" fill="#4A5868" text-anchor="middle">SHA-256 chain</text>
   </g>
-  <text x="550" y="452" font-size="11" fill="#4A5868" text-anchor="middle">Tamper-evident: changing an old reading breaks the chain and shows "Tampered"</text>
+  <text x="796" y="452" font-size="11" fill="#4A5868" text-anchor="end">Changing an old reading shows "Tampered"</text>
 
   <!-- Open-Meteo -->
   <g>
@@ -161,16 +162,16 @@
   <text x="140" y="179" font-size="11" fill="#13294B" text-anchor="middle">publish to its own topic only</text>
 
   <!-- 2 IoT Core to subscriber -->
-  <path d="M376 210 L376 298" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M376 210 L376 298" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
   <text x="384" y="248" font-size="11" fill="#13294B">subscribe</text>
 
   <!-- 3 subscriber to FastAPI -->
-  <path d="M446 337 L488 337" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M446 337 L488 337" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
   <text x="467" y="392" font-size="10" fill="#13294B" text-anchor="middle">POST</text>
   <text x="467" y="404" font-size="10" fill="#13294B" text-anchor="middle">/readings</text>
 
   <!-- 4 FastAPI to SQLite -->
-  <path d="M650 345 L688 345" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <path d="M650 345 L688 345" stroke="#13866B" stroke-width="3" fill="none" marker-start="url(#arrowGreen)" marker-end="url(#arrowGreen)"/>
 
   <!-- 5 FastAPI to Bedrock -->
   <path d="M590 300 L600 212" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
@@ -182,7 +183,7 @@
   <path d="M860 190 C 835 245, 700 250, 648 302" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
 
   <!-- 8 simulator to FastAPI (route below SQLite) -->
-  <path d="M860 360 C 830 420, 680 420, 620 376" stroke="#8A97A8" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrowGrey)"/>
+  <path d="M860 360 C 830 420, 680 420, 620 376" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
 
   <!-- 9 FastAPI to dashboard -->
   <path d="M540 374 C 520 470, 460 500, 440 548" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>

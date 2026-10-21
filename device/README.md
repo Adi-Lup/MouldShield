@@ -100,7 +100,7 @@ If the firmware is updated, check again whether this workaround is still needed 
 - the reading as JSON from Sergiu (8c, `reading_json.py`, same field names as `POST /readings`),
 - the MQTT publish over TLS from Adrian (T11, with `tls_connect()`).
 
-Every 15 seconds the device reads the sensor, sends the exact values to AWS IoT Core on `mouldshield/mouldshield-01/readings` (QoS 1), and then draws the screen. The status bar at the top shows **SYNCED** when the reading reached AWS and **OFFLINE** when it did not.
+Every 15 seconds the device reads the sensor, sends the exact values to AWS IoT Core on `mouldshield/mouldshield-01/readings` (QoS 1), and then draws the screen. The status bar at the top shows **SYNCED** when all readings reached AWS and **OFFLINE** when some are still waiting.
 
 How to run it: open UiFlow2 with Connection USB, paste the file in the Python tab (Custom Edit), press **Ctrl+S to save**, then Run. UiFlow2 runs the saved code, not what is on the screen.
 
@@ -117,6 +117,21 @@ How to run it: open UiFlow2 with Connection USB, paste the file in the Python ta
 
 The first version froze when the hotspot was turned off. In UiFlow2, `from umqtt import MQTTClient` gives the "robust" client, which retries for ever when the connection is lost and reconnects without our TLS clock workaround, so it can never get back. We now use `umqtt.simple`, a 10 second network timeout and a Wi-Fi check before each send, so a lost connection only gives OFFLINE.
 
+### More tests (21 October 2026)
+
+| Test | Result |
+|------|--------|
+| Hotspot turned off and on three times | Each time the screen showed OFFLINE straight away, kept updating, and the device reconnected by itself within about 20 seconds (risk R8 closed) |
+| Device to database time | Median 1.7 seconds over 26 readings, measured by the subscriber |
+
+### Readings kept while offline (21 October 2026)
+
+In the first test above, the readings taken while the hotspot was off were lost (4 to 9 each time), so the tenant would have gaps in the evidence (risk R9). Now the device keeps those readings in a list and sends them, oldest first, when the connection is back. The list holds up to 240 readings (one hour); after that the oldest one is dropped. At most 10 old readings are sent per cycle, so the screen does not stop for long after a long gap.
+
+Tested with the hotspot off for one minute: the console showed "NOT sent, 1 waiting" up to "4 waiting", and all four readings reached the database in the right order when the hotspot was back. `GET /verify` was still OK.
+
+Limits: the list is only in memory, so it is lost if the device is switched off. In rare cases a reading can arrive twice (sent, but the confirmation is lost).
+
 ## Next step
 
-Sprint 2: a small subscriber script that receives the readings from AWS IoT Core and saves them with `POST /readings`, so real readings reach the database and the dashboard.
+The subscriber (T27, `backend/mqtt_subscriber.py`) now brings the readings into the database. Next, the back-end moves to AWS (T16, Sprint 3).

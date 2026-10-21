@@ -27,7 +27,7 @@ CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
   <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; the web dashboard and the PDF report show the results" width="900">
 </p>
 
-The solid green arrow is working now: the device sends test messages to AWS IoT Core over TLS with its own X.509 certificate (13 October 2026). The dashed parts are planned for Sprints 2 and 3. The diagram is updated at the end of every sprint.
+The green arrows are working now (21 October 2026): the device sends real readings to AWS IoT Core over TLS, the subscriber brings them into the FastAPI back-end, and each reading is saved in SQLite with its SHA-256 hash. The back-end runs on a laptop for now and moves to EC2 in Sprint 3 (T16). The dashed parts are planned for Sprints 2 and 3. The diagram is updated at the end of every sprint.
 
 ## Repository structure
 
