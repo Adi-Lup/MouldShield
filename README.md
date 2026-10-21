@@ -38,6 +38,27 @@ The solid green arrow is working now: the device sends test messages to AWS IoT 
 | `dashboard/` | Web dashboard and mobile page |
 | `docs/` | Product backlog, stand-up records, sprint reviews, diagrams (Use Case, DFD), test plan and results |
 
+## Where to put your files
+
+Not sure where something goes? Use this table. Every file name starts with the task number when it belongs to one task, so it is easy to find later.
+
+| What you made | Folder | Example name |
+|---------------|--------|--------------|
+| Code for the device (MicroPython) | `device/` | `device/sensor_screen.py` |
+| Back-end code (FastAPI, database, scripts) | `backend/` | `backend/hash_chain.py` |
+| Dashboard and mobile page (HTML, CSS, JavaScript) | `dashboard/` | `dashboard/index.html` |
+| Use Case diagrams and DFDs (T15) | `docs/diagrams/` | `docs/diagrams/T15_use_case.png` |
+| Wireframes, persona and other design files | `docs/design/` | `docs/design/T05_persona.png` |
+| Research notes with sources | `docs/research/` | `docs/research/T04_humidity_thresholds.md` |
+| Test plan and test results (T22) | `docs/testing/` | `docs/testing/T22_test_results.md` |
+| Stand-up notes, sprint reviews | `docs/standups/` | `docs/standups/2026-10-22.md` |
+| Backlog and risk register | `docs/agile/` | Kept by the Scrum Master |
+| Logo and images used by the README | `assets/` | `assets/logo.svg` |
+
+Some things never go in the repository: certificates and keys (`*.pem`, `*.key`, `*.crt`), the `.env` file, the database file (`mouldshield.db`) and the `.venv` folder. `.gitignore` already blocks them, but check before you upload.
+
+To add a file without Git: open the right folder on GitHub, click **Add file**, then **Upload files**, and start the commit message with the task number, for example `#15 add the use case diagram`. That links the commit to the card on the board.
+
 ## Tech stack
 
 - Device: MicroPython on UiFlow2 firmware
@@ -48,7 +69,6 @@ The solid green arrow is working now: the device sends test messages to AWS IoT 
 
 ## Running the back-end locally
 
-The back-end code is added in task 7. Once `backend/main.py` exists:
 
 ```
 cd backend
@@ -60,18 +80,20 @@ uvicorn main:app --reload
 
 On macOS or Linux, activate the environment with `source .venv/bin/activate` instead.
 
-Then open http://127.0.0.1:8000/docs to test the endpoints.
+Then open http://127.0.0.1:8000/docs to test the endpoints. More details, including the simulator and the MQTT subscriber, are in `backend/README.md`.
 
 Copy `.env.example` to `.env` in the project root and fill in your own values. The `.env` file is never committed.
 
-## Planned endpoints
+## Endpoints
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/readings` | Save a new reading and calculate the risk level |
-| GET | `/readings/latest` | Return the most recent reading |
-| POST | `/report` | Create the AI explanation and the landlord letter |
-| GET | `/verify` | Check the hash chain and report "OK" or "Tampered" |
+| Method | Path | Purpose | Status |
+|--------|------|---------|--------|
+| POST | `/readings` | Save a new reading and link it to the hash chain | Working (T07, T12) |
+| GET | `/readings/latest` | Return the most recent reading | Working (T07) |
+| GET | `/verify` | Check the hash chain and report "OK" or "Tampered" | Working (T12) |
+| POST | `/report` | Create the AI explanation and the landlord letter | Planned (T13) |
+
+The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 
 ## Team
 
@@ -85,9 +107,9 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 
 - Tasks live on the GitHub Projects board: To do, In progress, Done. Each feature task has a MoSCoW label (Must or Should) and a Sprint value.
 - The product backlog (user stories, MoSCoW, sprint goals and Definition of Done) is in `docs/agile/product_backlog.md`, and the risk register in `docs/agile/risk_register.md`.
-- Each task is done on its own branch, for example `task-7-fastapi`.
-- Changes go into `main` through a pull request, checked by one teammate.
-- Commit messages are short and mention the task number, for example `#7 add POST /readings`.
+- We commit straight to `main`. The project is small and we work on different folders, so we do not use branches or pull requests.
+- Commit messages are short and start with the task number, for example `#7 add POST /readings`. This links the commit to the card on the board.
+- When a task is ready, the owner leaves a comment on its issue. One teammate checks the work and answers in the same issue, and then the card moves to Done.
 - A task is Done when the code is on GitHub, tested, and checked by one teammate.
 - Stand-up notes (attendance and decisions), sprint reviews and retrospectives are kept in `docs/standups/`.
 
