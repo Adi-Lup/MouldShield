@@ -6,12 +6,11 @@ Your dashboard code and separate system diagram files in one editable project. T
 
 ## Start here
 
-1. Right-click the ZIP and choose **Extract All**. Do not run files inside the ZIP.
-2. Open the extracted **MouldShield** folder.
-3. Double-click **START_HERE.html** for an immediate, self-contained demo in Chrome or Edge. No Python, npm, extension or internet connection is required for this preview. It includes your logo and the EN / RO interface. All system diagram files are kept separately in `diagrams/`.
-4. To edit the project, open this folder in **Visual Studio Code**. Edit `index.html`, `style.css` or `app.js` and save with **Ctrl+S**.
-5. For the editable multi-file version and API connection, double-click **START_WINDOWS.bat**. It detects Python 3.8+ and starts the local server. Open the exact address printed in its window if the browser does not open. Keep that window open while using the dashboard; **Ctrl+C** stops it.
-6. Refresh the browser after saving your changes. If you want your changes in the single-file demo too, run `py scripts/build_standalone.py` to rebuild `START_HERE.html`.
+
+1. Double-click **START_HERE.html** for an immediate, self-contained demo in Chrome or Edge. No Python, npm, extension or internet connection is required for this preview. It includes your logo and the EN / RO interface. All system diagram files are kept separately in `diagrams/`.
+2. To edit the project, open this folder in **Visual Studio Code**. Edit `index.html`, `style.css` or `app.js` and save with **Ctrl+S**.
+3. For the editable multi-file version and API connection, double-click **START_WINDOWS.bat**. It detects Python 3.8+ and starts the local server. Open the exact address printed in its window if the browser does not open. Keep that window open while using the dashboard; **Ctrl+C** stops it.
+4. Refresh the browser after saving your changes. If you want your changes in the single-file demo too, run `py scripts/build_standalone.py` to rebuild `START_HERE.html`.
 
 If Python is unavailable, the Windows launcher opens the sample-only single-file preview. Live API mode requires the local server and the team's back-end. Browser-local draft storage may depend on your browser's local-file rules.
 
