@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="2130" viewBox="0 0 2200 2130" role="img" aria-labelledby="dfd-title dfd-description">
+<title id="dfd-title">MouldShield data flow diagram, Level 1</title>
+<desc id="dfd-description">Four processes authenticate and store sensor readings, assess risk and serve warnings, verify reading integrity, and prepare reports and landlord letters. The external entities remain Device, Tenant, Landlord and Bedrock AI. Repeated Tenant boxes identify the same actor. Data stores contain readings and hashes, reports and photos, and device authentication records. This is a proposed design.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#203C73"/></marker></defs>
+<rect width="2200" height="2130" fill="white"/>
+<g font-family="DejaVu Sans,Arial,sans-serif" fill="#142332">
+<text x="1100" y="58.0" font-size="39" fill="#203C73" font-weight="700" text-anchor="middle">MouldShield — Data flow diagram · Level 1</text>
+<text x="1100" y="102.0" font-size="24" fill="#203C73" font-weight="400" text-anchor="middle">Proposed core system · expansion of your supplied context diagram</text>
+<polyline points="370,230 650,230" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1070,200 1530,200" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1530,275 1070,275" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="800,320 800,430" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="940,430 940,320" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="860,550 860,700" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1070,490 1740,490 1740,700" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="370,750 650,750" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="650,830 370,830" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1640,990 1640,880" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1840,880 1840,990" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="860,880 860,1400" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="650,490 500,490 500,1320 750,1320 750,1400" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1530,800 1310,800 1310,1320 1020,1320 1020,1400" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="370,1460 650,1460" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="650,1540 370,1540" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1070,1450 1530,1450" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1530,1540 1070,1540" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="780,1580 780,1840" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="940,1840 940,1580" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1030,1580 1030,1730 1740,1730 1740,1840" fill="none" stroke="#203C73" stroke-width="2.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="70" y="175" width="300" height="110" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="220.0" y="225.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Device</text>
+<text x="220.0" y="266.0" font-size="21" fill="#142332" font-weight="400" text-anchor="middle">StickS3 + ENV-III</text>
+<rect x="650" y="140" width="420" height="180" rx="28" fill="#315F94" stroke="#203C73" stroke-width="3"/>
+<text x="860" y="179.0" font-size="26" fill="white" font-weight="700" text-anchor="middle">1.0</text>
+<path d="M668 194H1052" stroke="#BFD3EC" stroke-width="1.5"/>
+<text x="860" y="240.0" font-size="29" fill="white" font-weight="600" text-anchor="middle">Authenticate device</text>
+<text x="860" y="279.15" font-size="29" fill="white" font-weight="600" text-anchor="middle">and store readings</text>
+<rect x="1530" y="155" width="550" height="120" rx="0" fill="#EDF2F8" stroke="#203C73" stroke-width="3"/>
+<path d="M1602 155V275" stroke="#203C73" stroke-width="3"/>
+<text x="1566" y="225.0" font-size="26" fill="#203C73" font-weight="700" text-anchor="middle">D3</text>
+<text x="1841.0" y="223.0" font-size="23" fill="#142332" font-weight="400" text-anchor="middle">Device authentication records</text>
+<rect x="650" y="430" width="420" height="120" rx="0" fill="#EDF2F8" stroke="#203C73" stroke-width="3"/>
+<path d="M722 430V550" stroke="#203C73" stroke-width="3"/>
+<text x="686" y="500.0" font-size="26" fill="#203C73" font-weight="700" text-anchor="middle">D1</text>
+<text x="896.0" y="498.0" font-size="23" fill="#142332" font-weight="400" text-anchor="middle">Readings + hash chain</text>
+<rect x="70" y="700" width="300" height="180" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="220.0" y="785.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Tenant</text>
+<text x="220.0" y="826.0" font-size="21" fill="#142332" font-weight="400" text-anchor="middle">same external entity</text>
+<rect x="650" y="700" width="420" height="180" rx="28" fill="#315F94" stroke="#203C73" stroke-width="3"/>
+<text x="860" y="739.0" font-size="26" fill="white" font-weight="700" text-anchor="middle">2.0</text>
+<path d="M668 754H1052" stroke="#BFD3EC" stroke-width="1.5"/>
+<text x="860" y="800.0" font-size="29" fill="white" font-weight="600" text-anchor="middle">Assess readings and</text>
+<text x="860" y="839.15" font-size="29" fill="white" font-weight="600" text-anchor="middle">serve risk warnings</text>
+<rect x="1530" y="700" width="420" height="180" rx="28" fill="#315F94" stroke="#203C73" stroke-width="3"/>
+<text x="1740" y="739.0" font-size="26" fill="white" font-weight="700" text-anchor="middle">3.0</text>
+<path d="M1548 754H1932" stroke="#BFD3EC" stroke-width="1.5"/>
+<text x="1740" y="800.0" font-size="29" fill="white" font-weight="600" text-anchor="middle">Verify reading</text>
+<text x="1740" y="839.15" font-size="29" fill="white" font-weight="600" text-anchor="middle">integrity</text>
+<rect x="1530" y="990" width="420" height="160" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="1740.0" y="1065.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Tenant</text>
+<text x="1740.0" y="1106.0" font-size="21" fill="#142332" font-weight="400" text-anchor="middle">same external entity</text>
+<rect x="70" y="1400" width="300" height="180" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="220.0" y="1485.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Tenant</text>
+<text x="220.0" y="1526.0" font-size="21" fill="#142332" font-weight="400" text-anchor="middle">same external entity</text>
+<rect x="650" y="1400" width="420" height="180" rx="28" fill="#315F94" stroke="#203C73" stroke-width="3"/>
+<text x="860" y="1439.0" font-size="26" fill="white" font-weight="700" text-anchor="middle">4.0</text>
+<path d="M668 1454H1052" stroke="#BFD3EC" stroke-width="1.5"/>
+<text x="860" y="1500.0" font-size="29" fill="white" font-weight="600" text-anchor="middle">Prepare report</text>
+<text x="860" y="1539.15" font-size="29" fill="white" font-weight="600" text-anchor="middle">and landlord letter</text>
+<rect x="1530" y="1400" width="420" height="180" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="1740.0" y="1500.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Bedrock AI</text>
+<rect x="650" y="1840" width="420" height="120" rx="0" fill="#EDF2F8" stroke="#203C73" stroke-width="3"/>
+<path d="M722 1840V1960" stroke="#203C73" stroke-width="3"/>
+<text x="686" y="1910.0" font-size="26" fill="#203C73" font-weight="700" text-anchor="middle">D2</text>
+<text x="896.0" y="1908.0" font-size="23" fill="#142332" font-weight="400" text-anchor="middle">Reports + photo records</text>
+<rect x="1530" y="1840" width="420" height="120" rx="0" fill="white" stroke="#203C73" stroke-width="3"/>
+<text x="1740.0" y="1910.0" font-size="31" fill="#142332" font-weight="700" text-anchor="middle">Landlord</text>
+<rect x="412.2" y="165" width="195.6" height="66.0" rx="4" fill="white"/>
+<text x="510" y="190.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Sensor data +</text>
+<text x="510" y="217.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">authentication</text>
+<rect x="1189.8" y="151" width="220.4" height="39.0" rx="4" fill="white"/>
+<text x="1300" y="176.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Device ID lookup</text>
+<rect x="1158.8" y="227" width="282.4" height="39.0" rx="4" fill="white"/>
+<text x="1300" y="252.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Authentication record</text>
+<rect x="605.8" y="340" width="158.4" height="66.0" rx="4" fill="white"/>
+<text x="685" y="365.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">New reading</text>
+<text x="685" y="392.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">+ hash</text>
+<rect x="958.4" y="340" width="183.2" height="39.0" rx="4" fill="white"/>
+<text x="1050" y="365.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Previous hash</text>
+<rect x="718.8" y="595" width="282.4" height="66.0" rx="4" fill="white"/>
+<text x="860" y="620.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Temperature, humidity</text>
+<text x="860" y="647.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">and timestamps</text>
+<rect x="1250.2" y="440" width="319.6" height="39.0" rx="4" fill="white"/>
+<text x="1410" y="465.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Readings + stored hashes</text>
+<rect x="393.6" y="705" width="232.8" height="39.0" rx="4" fill="white"/>
+<text x="510" y="730.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Dashboard request</text>
+<rect x="375.0" y="781" width="270.0" height="66.0" rx="4" fill="white"/>
+<text x="510" y="806.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Readings, risk level</text>
+<text x="510" y="833.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">and warnings</text>
+<rect x="1364.6" y="910" width="170.8" height="66.0" rx="4" fill="white"/>
+<text x="1450" y="935.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Verification</text>
+<text x="1450" y="962.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">request</text>
+<rect x="1933.2" y="910" width="133.6" height="66.0" rx="4" fill="white"/>
+<text x="2000" y="935.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Integrity</text>
+<text x="2000" y="962.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">result</text>
+<rect x="774.6" y="1055" width="170.8" height="39.0" rx="4" fill="white"/>
+<text x="860" y="1080.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Risk summary</text>
+<rect x="396.0" y="1165" width="208.0" height="66.0" rx="4" fill="white"/>
+<text x="500" y="1190.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Selected sensor</text>
+<text x="500" y="1217.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">readings</text>
+<rect x="1181.2" y="1165" width="257.6" height="66.0" rx="4" fill="white"/>
+<text x="1310" y="1190.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Verification result</text>
+<text x="1310" y="1217.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">required for report</text>
+<rect x="387.4" y="1383" width="245.2" height="93.0" rx="4" fill="white"/>
+<text x="510" y="1408.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Report request,</text>
+<text x="510" y="1435.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">photo + language +</text>
+<text x="510" y="1462.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">landlord details</text>
+<rect x="381.2" y="1493" width="257.6" height="66.0" rx="4" fill="white"/>
+<text x="510" y="1518.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Explanation, report</text>
+<text x="510" y="1545.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">and letter</text>
+<rect x="1134.0" y="1383" width="332.0" height="66.0" rx="4" fill="white"/>
+<text x="1300" y="1408.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Reading summary, language</text>
+<text x="1300" y="1435.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">and optional damp photo</text>
+<rect x="1158.8" y="1493" width="282.4" height="66.0" rx="4" fill="white"/>
+<text x="1300" y="1518.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Analysis + translated</text>
+<text x="1300" y="1545.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">explanation</text>
+<rect x="562.2" y="1635" width="195.6" height="66.0" rx="4" fill="white"/>
+<text x="660" y="1660.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Report, letter</text>
+<text x="660" y="1687.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">+ photo record</text>
+<rect x="901.8" y="1635" width="96.4" height="66.0" rx="4" fill="white"/>
+<text x="950" y="1660.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Saved</text>
+<text x="950" y="1687.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">report</text>
+<rect x="1256.8" y="1680" width="406.4" height="39.0" rx="4" fill="white"/>
+<text x="1460" y="1705.0" font-size="20" fill="#142332" font-weight="400" text-anchor="middle">Tenant-approved report + letter</text>
+<path d="M70 2010H2130" stroke="#9AAFCB" stroke-width="2"/>
+<text x="1100" y="2050.0" font-size="23" fill="#203C73" font-weight="400" text-anchor="middle">Rectangles: external entities · Rounded boxes: processes · Numbered stores: D1–D3</text>
+<text x="1100" y="2090.0" font-size="21" fill="#142332" font-weight="400" text-anchor="middle">Repeated Tenant boxes refer to one actor. Arrows carry data; this diagram does not claim live services are connected.</text>
+</g></svg>
