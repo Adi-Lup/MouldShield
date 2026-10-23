@@ -14,9 +14,6 @@ These changes are in the dashboard implementation. Wireframes remain unchanged.
 | 6. Seven-day Should | 24 h / 7 days switch, seven daily average bars, hours strictly above 70%, and coverage table | Missing intervals are not counted; history route still required for live data |
 | 7. Weather Could | WMO weather_code icon plus weather words; gentle movement for at most five seconds after page opening | Reduced motion supported, no flashing lightning, refresh does not restart animation |
 | 8. Accessibility target | Large type, visible focus, named form controls, risk/integrity words and icons, tested main-text contrast above 7:1 | Full WCAG 2.2 AA review remains a team target, not a certification claim |
-| 9. Lighthouse and T22 | Actual desktop and mobile audits of all three pages in both EN and RO | 12/12 reports score 100/100 automated accessibility; HTML/JSON evidence in docs/testing/lighthouse |
-| Added Level 1 DFD | Separate PNG and editable SVG files in diagrams/; no dashboard view | Original use case and context images unchanged; see T15_diagrams.md |
-
 The team repository was checked again on 23 October 2026 (`backend/main.py`, SHA `12bca447901f8c811b46778334ac358a5ad29c5d`). It exposes `/readings/latest` and `/verify`; `/report`, forecast and history routes were not present. Their front-end adapters are ready for Sergiu's agreed endpoints and response models; live integration is not reported as passed.
 
 ## Requested interface revision
