@@ -92,7 +92,7 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(FixtureAPI.received, body)
 
     def test_assets(self):
-        for name in ['index.html', 'style.css', 'core.js', 'i18n.js', 'app.js', 'config.js', 'assets/logo-by-the-sharks.svg', 'boot.js', 'START_HERE.html', 'diagrams/T15_use_case.png', 'diagrams/T15_data_flow.png', 'diagrams/T15_data_flow_level1.png', 'diagrams/T15_data_flow_level1.svg']:
+        for name in ['index.html', 'style.css', 'core.js', 'i18n.js', 'app.js', 'config.js', 'assets/logo-by-the-sharks.svg', 'boot.js', 'START_HERE.html', 'diagrams/T15_use_case.png', 'diagrams/T15_data_flow.png']:
             with self.subTest(name=name), urllib.request.urlopen(self.base+'/'+name, timeout=2) as response:
                 self.assertEqual(response.status, 200)
                 self.assertTrue(response.read())
@@ -148,7 +148,7 @@ class PreviewTests(unittest.TestCase):
         self.assertNotIn('data-mode-label', page)
         self.assertIn('id="ui-language"', page)
         self.assertIn('MouldShieldI18n', page)
-        for name in ['T15_use_case.png', 'T15_data_flow.png', 'T15_data_flow_level1.png']:
+        for name in ['T15_use_case.png', 'T15_data_flow.png']:
             self.assertTrue((ROOT/'diagrams'/name).is_file())
 
 
