@@ -14,7 +14,7 @@ Your dashboard code and separate system diagram files in one editable project. T
 
 If Python is unavailable, the Windows launcher opens the sample-only single-file preview. Live API mode requires the local server and the team's back-end. Browser-local draft storage may depend on your browser's local-file rules.
 
-### VS Code shortcuts and other platforms
+### VS Code shortcuts and other platforms.
 
 - **Ctrl+Shift+B** starts the included preview task. Click its printed address.
 - **F5** starts the preview on port 8080 and launches Chrome using the included configuration. Chrome and Python must be installed. Close any previous preview on 8080 before using F5.
