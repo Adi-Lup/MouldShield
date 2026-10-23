@@ -35,8 +35,8 @@ The green arrows are working now (21 October 2026): the device sends real readin
 |--------|-----------------|
 | `backend/` | FastAPI app, database, risk calculation, hash chain, AI and forecast logic, data simulator |
 | `device/` | MicroPython code for the M5StickS3 (UiFlow2 firmware) |
-| `dashboard/` | Web dashboard and mobile page |
-| `docs/` | Product backlog, stand-up records, sprint reviews, diagrams (Use Case, DFD), test plan and results |
+| `dashboard/` | Web dashboard, mobile page and the system diagrams (Use Case, DFD) |
+| `docs/` | Product backlog, stand-up records, sprint reviews, test plan and results |
 
 ## Where to put your files
 
@@ -47,7 +47,7 @@ Not sure where something goes? Use this table. Every file name starts with the t
 | Code for the device (MicroPython) | `device/` | `device/sensor_screen.py` |
 | Back-end code (FastAPI, database, scripts) | `backend/` | `backend/hash_chain.py` |
 | Dashboard and mobile page (HTML, CSS, JavaScript) | `dashboard/` | `dashboard/index.html` |
-| Use Case diagrams and DFDs (T15) | `docs/diagrams/` | `docs/diagrams/T15_use_case.png` |
+| Use Case diagrams and DFDs (T15) | `dashboard/diagrams/` | `dashboard/diagrams/T15_use_case.png` |
 | Wireframes, persona and other design files | `docs/design/` | `docs/design/T05_persona.png` |
 | Research notes with sources | `docs/research/` | `docs/research/T04_humidity_thresholds.md` |
 | Test plan and test results (T22) | `docs/testing/` | `docs/testing/T22_test_results.md` |
