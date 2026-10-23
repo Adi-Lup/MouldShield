@@ -20,4 +20,4 @@ The team repository was checked again on 23 October 2026 (`backend/main.py`, SHA
 
 The top-right mode/profile label (Live API / T) has been replaced with an accessible EN / RO selector. It switches interface text and accessible names, updates the document language and remembers the choice. Report explanation language remains a separate control; switching the header sets its default to EN or RO. Exact sensor readings, CSV data, returned explanations and user-edited letters are preserved. The mode notice and connection button remain in the dashboard banner.
 
-The System diagrams navigation item and page were removed. All original and Level 1 diagram files remain unchanged in the separate `diagrams/` folder. The standalone HTML embeds no diagram images.
+The System diagrams navigation item and page were removed. All original  diagram files remain unchanged in the separate `diagrams/` folder. The standalone HTML embeds no diagram images.
