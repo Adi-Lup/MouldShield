@@ -2,7 +2,7 @@
 
 FastAPI app for MouldShield. Owner: Sergiu (tasks 6, 7, 9, 10, 13, 17).
 
-Sprint 1 version: a simple API on a laptop that saves readings in a SQLite file (`mouldshield.db`). No AWS needed. The full back-end comes in Sprint 2.
+The API saves the readings in a SQLite file (`mouldshield.db`). On our own computers it runs without AWS. On the EC2 server it runs through `server.py` (T16).
 
 ## Files
 
@@ -10,6 +10,8 @@ Sprint 1 version: a simple API on a laptop that saves readings in a SQLite file 
 - `simulator.py`: sends a realistic test reading every 5 seconds (T09)
 - `hash_chain.py`: the SHA-256 hash chain that makes the readings tamper-evident (T12, Adrian)
 - `mqtt_subscriber.py`: brings the real device readings from AWS IoT Core into the API (T27, Adrian)
+- `risk.py`: the risk level of a reading, LOW, MODERATE or HIGH (T10)
+- `report.py` and `report_text.py`: `POST /report`, the explanation and the letter to the landlord (T13)
 
 ## Database (T06)
 
@@ -46,9 +48,10 @@ uvicorn main:app --reload
 
 Open http://127.0.0.1:8000/docs to try it.
 
-- `POST /readings` saves a reading, links it to the one before it, and returns `{"saved": true, "id": ..., "hash": ...}`
-- `GET /readings/latest` returns the last saved reading
+- `POST /readings` saves a reading, links it to the one before it, and answers `201` with `{"saved": true, "id": ..., "hash": ..., "risk": ...}`
+- `GET /readings/latest` returns the last saved reading with its risk level, or `404` with `no readings yet` when the database is empty
 - `GET /verify` checks the hash chain and returns `OK`, or `Tampered` with the id of the first reading that was changed (T12)
+- `POST /report` returns the explanation and the letter to the landlord for one reading (T13)
 
 Example reading (the same field names are used on the device and in the database):
 
@@ -112,3 +115,56 @@ Readings are only ever added. There is no endpoint to change or delete a reading
 Limitation: the chain is tamper-evident, not tamper-proof. Someone with full access to the database could change a reading and calculate all the hashes after it again, or delete the newest readings. Anchoring the hashes outside the server (for example S3 Object Lock) is future work.
 
 A database made before T12 has readings without hashes, so `GET /verify` answers `Tampered` at reading 1. Delete `mouldshield.db` and start again.
+
+## Risk level (T10)
+
+`risk.py` gives every reading a risk level, with the limits the team agreed at the Sprint 1 review:
+
+| Humidity | Risk |
+| --- | --- |
+| 60% or less | LOW |
+| above 60%, up to 70% | MODERATE |
+| above 70% | HIGH |
+
+It uses the exact humidity saved in the database, the same as the dashboard. The device rounds the humidity before it chooses the colour, so for a reading just above a limit, for example 70.3%, the device shows MODERATE and the API and the dashboard say HIGH.
+
+`POST /readings` and `GET /readings/latest` both return the level as `risk`.
+
+## Report: explanation and letter (T13)
+
+The dashboard sends the id of a reading and a language:
+
+```json
+{"id": 131, "language": "ro"}
+```
+
+It also sends the reading itself, but the API only uses the id and reads the reading from the database, so a letter can never show numbers that are not in our data.
+
+The answer:
+
+```json
+{
+  "explanation": "Umiditatea este 72%, adică risc RIDICAT. ...",
+  "explanation_source": "ai",
+  "letter": "[Your name]\n[Your address]\n...",
+  "risk": "HIGH",
+  "reading_id": 131
+}
+```
+
+- `explanation`: two or three sentences in English (`en`), Romanian (`ro`) or Polish (`pl`), written by Claude Haiku 4.5 on Amazon Bedrock from the numbers only (no personal data is sent). Each one is saved, so changing the language back and forth does not call Bedrock again.
+- If Bedrock is not available (for example on our own computers without AWS), the answer is not plain text, or the limit of 50 calls in 24 hours is reached, the explanation is a fixed text in the same language and `explanation_source` is `fixed`. The report always works.
+- `letter`: in English, filled in from the database: the average humidity over the 7 days up to the reading (or since the first reading, if there is less than a week), the time above 70%, the highest reading, the reading itself, and the result of the hash chain check. The sentence about the readings being unchanged is only added when `GET /verify` would answer `OK`. The parts in [brackets] are for the tenant to fill in.
+- `404` if the reading does not exist, `422` if the language is not `en`, `ro` or `pl`.
+
+On the EC2 server `POST /api/report` is open from outside (`server.py`), like the photo upload. It saves no readings, and the Bedrock limit stops it being used to spend our credit.
+
+## Tests
+
+From the `backend` folder:
+
+```
+python -m unittest discover tests
+```
+
+`test_risk.py` and `test_report.py` use a temporary database and a fake Bedrock, so they never touch the real data or AWS.
