@@ -14,7 +14,7 @@ function dailyStats(readings,{now=Date.now(),timeZone='Europe/London',intervalSe
 function normalizeForecast(raw){
   if(!raw||raw.available===false)throw Error(raw?.reason||'Forecast unavailable');
   const outside=raw.outside;
-  if(!outside||[outside.now_c,outside.tonight_min_c,outside.tomorrow_c].some(v=>number(v)===null)||typeof raw.condensation?.warning!=='string'||!raw.condensation.warning.trim())throw Error('Incomplete T17 forecast response');
+  if(!outside||[outside.now_c,outside.tonight_min_c,outside.tomorrow_c].some(v=>number(v)===null)||typeof raw.condensation?.warning!=='string'||!raw.condensation.warning.trim())throw Error('Incomplete forecast response');
   const horizon=raw.condensation.horizon_hours??48;
   if(number(horizon)===null||horizon<24||horizon>48)throw Error('Forecast horizon must be between 24 and 48 hours');
   const updatedAt=raw.updated_at??null;

@@ -54,11 +54,11 @@ const ro={
 'Persistent damp or visible mould should be reported to your landlord.':'Umezeala persistentă sau mucegaiul vizibil trebuie raportate proprietarului.',
 'How are the colours chosen?':'Cum sunt alese culorile?','THE NEXT 24–48 HOURS':'URMĂTOARELE 24–48 DE ORE','Condensation forecast':'Prognoza condensului',
 'Not connected':'Neconectat','Unavailable':'Indisponibil','Sample forecast':'Prognoză demonstrativă','Weather unavailable':'Date meteo indisponibile',
-'Condensation warning unavailable until T17 is connected.':'Avertizarea privind condensul va fi disponibilă după conectarea T17.',
+'Condensation warning not available yet.':'Avertizarea privind condensul nu este disponibilă încă.',
 'Outside now':'Afară acum','Tonight’s minimum':'Minima din această noapte','Tomorrow':'Mâine',
 'Forecast supplied by the project back-end, using Open-Meteo.':'Prognoză furnizată de serverul proiectului, folosind Open-Meteo.',
-'No condensation or outside-temperature values are invented when T17 is unavailable.':'Când T17 nu este disponibil, nu sunt generate valori pentru condens sau temperatura exterioară.',
-'Forecast unavailable: T17 endpoint is not configured.':'Prognoza nu este disponibilă: ruta T17 nu este configurată.','Loading forecast…':'Se încarcă prognoza…',
+'No condensation or outside-temperature values are shown when the forecast is unavailable.':'Când prognoza nu este disponibilă, nu sunt afișate valori pentru condens sau temperatura exterioară.',
+'Forecast unavailable: the forecast address is not set.':'Prognoza nu este disponibilă: adresa prognozei nu este setată.','Loading forecast…':'Se încarcă prognoza…',
 'Sample warning: colder conditions tonight may increase condensation risk.':'Avertizare demonstrativă: vremea mai rece din această noapte poate crește riscul de condens.',
 'YOUR EVIDENCE':'DOVEZILE TALE','Reading integrity':'Integritatea citirilor','Not checked':'Neverificat','Not checked · demo':'Neverificat · demonstrație',
 'Data verified':'Date verificate','Tampered':'Date modificate','No data to verify':'Nu există date de verificat','Verification unavailable':'Verificare indisponibilă','Checking data…':'Se verifică datele…',
@@ -120,7 +120,7 @@ function translated(source){
   else if((match=value.match(/^Chain mismatch at reading (.*?)\.$/)))result='Neconcordanță în lanț la citirea '+match[1]+'.';
   else if((match=value.match(/^Humidity over the last 24 hours; latest (.*?) percent\.$/)))result='Umiditatea în ultimele 24 de ore; ultima valoare '+match[1]+'%.';
   else if((match=value.match(/^(.*?), (-?[\d.]+ °C)$/))&&ro[match[1]])result=ro[match[1]]+', '+match[2];
-  else if((match=value.match(/^(Illustrative forecast\.|Forecast supplied by T17\.) (?:Updated (.*?)\. )?Next (.*?) hours\. Weather data: Open-Meteo\.$/)))result=(match[1]==='Illustrative forecast.'?'Prognoză demonstrativă. ':'Prognoză furnizată de T17. ')+(match[2]?'Actualizată la '+match[2]+'. ':'')+'Următoarele '+match[3]+' de ore. Sursa meteo: Open-Meteo.';
+  else if((match=value.match(/^(Illustrative forecast\.|Forecast for London\.) (?:Updated (.*?)\. )?Next (.*?) hours\. Weather data: Open-Meteo\.$/)))result=(match[1]==='Illustrative forecast.'?'Prognoză demonstrativă. ':'Prognoză pentru Londra. ')+(match[2]?'Actualizată la '+match[2]+'. ':'')+'Următoarele '+match[3]+' de ore. Sursa meteo: Open-Meteo.';
   else if((match=value.match(/^Live API mode\. (.*)$/)))result='Mod API live. '+match[1].replace(/^Source: /,'Sursa: ').replace('Requests use the same origin.','Cererile folosesc aceeași origine.');
   else if((match=value.match(/^Requesting explanation in (.*?)…$/)))result='Se solicită explicația în '+match[1]+'…';
   else if((match=value.match(/^Sample explanation in (.*?)\. No API request was made in demo mode\.$/)))result='Explicație demonstrativă în '+match[1]+'. În modul demonstrativ nu a fost trimisă o cerere API.';
