@@ -10,7 +10,7 @@ import json
 import os
 import sqlite3
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import boto3
 from fastapi import APIRouter, HTTPException, Request, Response
@@ -29,7 +29,8 @@ REGION = "eu-west-2"
 MODEL_ID = "eu.anthropic.claude-haiku-4-5-20251001-v1:0"
 
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024
-MAX_PHOTOS_PER_DAY = 12
+# At most this many calls to Bedrock in any 24 hours
+MAX_PHOTOS_PER_24H = 20
 MAX_SIDE = 1568
 ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP", "HEIF"}
 
@@ -296,13 +297,14 @@ async def upload_photo(request: Request, confirm: bool = False):
     result = pending.pop(original_sha256, (0, None))[1] if confirm else None
 
     if result is None:
-        # Daily limit on calls to Bedrock, so nobody can use the upload to spend our AWS credit
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        # Limit on calls to Bedrock in the last 24 hours, so nobody can use the upload to spend
+        # our AWS credit. The times are saved as text like 2026-10-27T14:35:05Z, so they compare in order.
+        since = (datetime.now(timezone.utc) - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%SZ")
         conn = get_db()
-        count = conn.execute("SELECT COUNT(*) FROM photo_attempts WHERE at LIKE ?", (today + "%",)).fetchone()[0]
+        count = conn.execute("SELECT COUNT(*) FROM photo_attempts WHERE at > ?", (since,)).fetchone()[0]
         conn.close()
-        if count >= MAX_PHOTOS_PER_DAY:
-            raise HTTPException(status_code=429, detail=f"The limit of {MAX_PHOTOS_PER_DAY} photos a day has been reached. Please try again tomorrow.")
+        if count >= MAX_PHOTOS_PER_24H:
+            raise HTTPException(status_code=429, detail=f"The limit of {MAX_PHOTOS_PER_24H} photos in 24 hours has been reached. Please try again later.")
         result = await run_in_threadpool(analyse, body)
 
         if not result["damp_visible"] and not confirm:

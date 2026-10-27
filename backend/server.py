@@ -27,7 +27,7 @@ INSIDE = {"127.0.0.1", "::1"}
 READ_ONLY = {"GET", "HEAD"}
 
 # The only change allowed from outside: a tenant adding a photo (T18).
-# photos.py checks the file and keeps to 12 photos a day, so it cannot be used to spend our credit.
+# photos.py checks the file and keeps to 20 photos in 24 hours, so it cannot be used to spend our credit.
 OPEN_FOR_WRITING = {("POST", "/api/photos")}
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)

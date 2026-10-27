@@ -129,7 +129,7 @@ The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 - Each team member has their own IAM user on AWS with MFA. The root account is not used for daily work.
 - A budget alert is set on the AWS account.
 - The dashboard is only reachable over HTTPS, through CloudFront. The EC2 server accepts HTTP only from CloudFront, and SSH only from the Scrum Master.
-- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain. The one exception is adding a photo (T18), with a limit of 12 photos a day.
+- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain. The one exception is adding a photo (T18), with a limit of 20 photos in any 24 hours.
 - Photos are saved in a private S3 bucket as a clean JPEG, without their hidden data. The location from the photo is kept only in the database on the server and is never sent back by the API (a test checks this).
 - The EC2 server has no AWS keys. It uses an IAM role that can only put and read photos in our bucket and call one Bedrock model.
 

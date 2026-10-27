@@ -147,14 +147,22 @@ class PhotoTests(unittest.TestCase):
         r = self.client.post("/api/photos", content=b"x", headers={"Content-Length": str(20 * 1024 * 1024)})
         self.assertEqual(r.status_code, 413)
 
-    def test_daily_limit_of_12(self):
+    def test_limit_of_20_in_24_hours(self):
         small = io.BytesIO()
         Image.new("RGB", (100, 100)).save(small, "JPEG")
-        for _ in range(12):
+        for _ in range(20):
             self.assertEqual(self.upload(small.getvalue()).status_code, 201)
         r = self.upload(small.getvalue())
         self.assertEqual(r.status_code, 429)
-        self.assertEqual(self.bedrock.calls, 12)
+        self.assertEqual(self.bedrock.calls, 20)
+
+    def test_attempts_older_than_24_hours_do_not_count(self):
+        conn = self.photos.get_db()
+        for _ in range(20):
+            conn.execute("INSERT INTO photo_attempts (at) VALUES ('2026-01-01T10:00:00Z')")
+        conn.commit()
+        conn.close()
+        self.assertEqual(self.upload(make_photo("JPEG")).status_code, 201)
 
     def test_image_route_checks_the_photo_was_not_changed(self):
         r = self.upload(make_photo("JPEG"))
@@ -194,11 +202,11 @@ class PhotoTests(unittest.TestCase):
         self.assertEqual(r.status_code, 201, r.text)
         self.assertEqual(r.json()["description"], "There is condensation on the window.")
 
-    def test_photos_the_tenant_did_not_keep_count_for_the_daily_limit(self):
+    def test_photos_the_tenant_did_not_keep_count_for_the_limit(self):
         self.bedrock.answer = '{"damp_visible": false, "description": "Nothing to see."}'
         small = io.BytesIO()
         Image.new("RGB", (100, 100)).save(small, "JPEG")
-        for _ in range(12):
+        for _ in range(20):
             self.assertEqual(self.upload(small.getvalue()).status_code, 200)
         self.assertEqual(self.upload(small.getvalue()).status_code, 429)
 
