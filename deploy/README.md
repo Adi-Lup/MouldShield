@@ -28,7 +28,7 @@ Both run as the normal `ubuntu` user, start by themselves when the server boots 
 - IAM role `mouldshield-ec2-role` on the server, with only the policy `mouldshield-ec2-photos-policy`: put and get objects in `mouldshield-photos`, and call Claude Haiku 4.5 through the EU inference profile `eu.anthropic.claude-haiku-4-5-20251001-v1:0`. No AWS keys on the server.
 - `backend/photos.py` turns any photo (JPG, PNG, WebP or HEIC from an iPhone) into a clean JPEG of at most 1568 px, asks Bedrock for a short description, and saves the JPEG in S3. The database keeps the SHA-256 of the original file and of the JPEG, the upload time, the date and phone from the photo, the location (private) and a hash of the whole record.
 - `dashboard/photos.js` adds the "Photo evidence" part to the report page. `server.py` adds it to the page, so the existing dashboard files are not changed.
-- At most 12 photos a day. Tests: `cd backend` then `python -m unittest discover tests` (they use fake AWS clients).
+- At most 12 photos a day. Tests: `cd backend` then `python -m unittest discover tests` (they use fake AWS clients and a temporary database). The test client needs `httpx2` (`pip install httpx2`); the app itself does not.
 
 ## HTTPS with CloudFront
 
