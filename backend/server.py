@@ -22,13 +22,14 @@ DASHBOARD = Path(__file__).resolve().parent.parent / "dashboard"
 INSIDE = {"127.0.0.1", "::1"}
 
 # Methods anyone may use from outside: only reading, never changing data.
-# This also blocks POST /api/report for now. When T13 is ready we allow that
-# one route here, with a limit, because every report calls Bedrock and costs money.
 READ_ONLY = {"GET", "HEAD"}
 
-# The only change allowed from outside: a tenant adding a photo (T18).
-# photos.py checks the file and keeps to 20 photos in 24 hours, so it cannot be used to spend our credit.
-OPEN_FOR_WRITING = {("POST", "/api/photos")}
+# The only POST requests allowed from outside:
+# - a tenant adding a photo (T18). photos.py checks the file and keeps to 20 photos in 24 hours.
+# - a tenant asking for the report (T13). It saves no readings, and report.py keeps to
+#   50 calls to Bedrock in 24 hours (after that it uses the fixed text), so it cannot be
+#   used to spend our credit.
+OPEN_FOR_WRITING = {("POST", "/api/photos"), ("POST", "/api/report")}
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 

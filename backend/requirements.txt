@@ -6,3 +6,4 @@ requests
 paho-mqtt
 Pillow
 pillow-heif
+tzdata

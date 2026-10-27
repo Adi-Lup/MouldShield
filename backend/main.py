@@ -8,10 +8,14 @@ from pydantic import BaseModel
 
 from hash_chain import GENESIS_HASH, calculate_hash, verify_chain
 from risk import risk_level
+from report import router as report_router
 
 DB_FILE = "mouldshield.db"
 
 app = FastAPI(title="MouldShield API")
+
+# T13: POST /report (explanation and letter to the landlord)
+app.include_router(report_router)
 
 
 def get_db():
