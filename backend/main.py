@@ -3,12 +3,17 @@
 
 import sqlite3
 
+from datetime import timedelta
+
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 
 from hash_chain import GENESIS_HASH, calculate_hash, verify_chain
 from risk import risk_level
 from report import router as report_router
+from forecast import router as forecast_router
+from report_text import TIME_FORMAT, parse_time
 
 DB_FILE = "mouldshield.db"
 
@@ -16,6 +21,11 @@ app = FastAPI(title="MouldShield API")
 
 # T13: POST /report (explanation and letter to the landlord)
 app.include_router(report_router)
+# T17: GET /forecast (condensation warning for the next 48 hours)
+app.include_router(forecast_router)
+
+# Big answers (the 7-day history) are sent compressed, about 10 times smaller
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
 def get_db():
@@ -33,6 +43,10 @@ def get_db():
             hash TEXT
         )
         """
+    )
+    # T17: makes the 7-day history quick to read for one device
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS readings_device_time ON readings (device_id, timestamp)"
     )
     return conn
 
@@ -103,3 +117,28 @@ def verify():
     ).fetchall()
     conn.close()
     return verify_chain(rows)
+
+
+@app.get("/readings/history")
+def readings_history():
+    # T17: the readings of the last 7 days for the dashboard graph, oldest first.
+    # Same device as the last reading, and the exact values, not rounded.
+    conn = get_db()
+    last = conn.execute(
+        "SELECT device_id, timestamp FROM readings ORDER BY id DESC LIMIT 1"
+    ).fetchone()
+    if last is None:
+        conn.close()
+        return {"readings": []}
+    device_id, newest = last
+    since = (parse_time(newest) - timedelta(days=7)).strftime(TIME_FORMAT)
+    rows = conn.execute(
+        "SELECT id, device_id, timestamp, temperature_c, humidity_pct FROM readings "
+        "WHERE device_id = ? AND timestamp > ? ORDER BY timestamp",
+        (device_id, since),
+    ).fetchall()
+    conn.close()
+    return {"readings": [
+        {"id": r[0], "device_id": r[1], "timestamp": r[2], "temperature_c": r[3], "humidity_pct": r[4]}
+        for r in rows
+    ]}
