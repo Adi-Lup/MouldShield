@@ -1,5 +1,5 @@
 # main.py - MouldShield back-end API
-# Saves the readings in a SQLite database file
+# Saves the readings in a SQLite database file and gives them back with their risk level
 
 import sqlite3
 
@@ -7,6 +7,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from hash_chain import GENESIS_HASH, calculate_hash, verify_chain
+from risk import risk_level
 
 DB_FILE = "mouldshield.db"
 
@@ -62,7 +63,8 @@ def save_reading(reading: Reading):
     conn.commit()
     new_id = cursor.lastrowid
     conn.close()
-    return {"saved": True, "id": new_id, "hash": new_hash}
+    return {"saved": True, "id": new_id, "hash": new_hash,
+            "risk": risk_level(reading.humidity_pct)}
 
 
 @app.get("/readings/latest")
@@ -82,6 +84,7 @@ def latest_reading():
         "timestamp": row[2],
         "temperature_c": row[3],
         "humidity_pct": row[4],
+        "risk": risk_level(row[4]),
     }
 
 
