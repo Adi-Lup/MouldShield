@@ -1,13 +1,16 @@
 # simulator.py - sends realistic test readings to the back-end
 # Used when the device is not connected
 
+import os
 import random
 import time
 from datetime import datetime, timezone
 
 import requests
 
-API_URL = "http://127.0.0.1:8000/readings"
+# Same as the subscriber: on our own computers the default address works.
+# On the EC2 server run it with MOULDSHIELD_API_URL=http://127.0.0.1/api/readings
+API_URL = os.environ.get("MOULDSHIELD_API_URL", "http://127.0.0.1:8000/readings")
 
 humidity = 60.0
 
