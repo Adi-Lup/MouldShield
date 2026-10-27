@@ -13,6 +13,8 @@ User=ubuntu
 WorkingDirectory=/home/ubuntu/mouldshield/backend
 # Print messages straight away, so they show up in the logs without a delay
 Environment=PYTHONUNBUFFERED=1
+# On the server the API is under /api (see backend/server.py)
+Environment=MOULDSHIELD_API_URL=http://127.0.0.1/api/readings
 ExecStart=/home/ubuntu/mouldshield/backend/.venv/bin/python mqtt_subscriber.py
 Restart=always
 RestartSec=10

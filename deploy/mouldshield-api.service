@@ -1,8 +1,8 @@
-# T16: runs the FastAPI back-end on the EC2 server as a service.
+# T16: runs the back-end (API under /api) and the dashboard on the EC2 server as a service.
 # Copy to /etc/systemd/system/ on the server (see deploy/README.md).
 
 [Unit]
-Description=MouldShield FastAPI back-end
+Description=MouldShield back-end and dashboard
 # Start only after the network is ready
 After=network-online.target
 Wants=network-online.target
@@ -11,8 +11,11 @@ Wants=network-online.target
 # Run as the normal ubuntu user, not as root
 User=ubuntu
 WorkingDirectory=/home/ubuntu/mouldshield/backend
-# Use the uvicorn from the project .venv, so no activate step is needed
-ExecStart=/home/ubuntu/mouldshield/backend/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
+# Let the ubuntu user use port 80 (normally only root can use ports below 1024)
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+# Use the uvicorn from the project .venv, so no activate step is needed.
+# server.py serves main.py under /api and the dashboard pages on port 80.
+ExecStart=/home/ubuntu/mouldshield/backend/.venv/bin/uvicorn server:app --host 0.0.0.0 --port 80
 # If the app stops for any reason, start it again after 5 seconds
 Restart=always
 RestartSec=5
