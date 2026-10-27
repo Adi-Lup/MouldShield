@@ -1,9 +1,9 @@
-# main.py - simple MouldShield back-end for Sprint 1
-# Saves one reading in a SQLite database file
+# main.py - MouldShield back-end API
+# Saves the readings in a SQLite database file
 
 import sqlite3
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from hash_chain import GENESIS_HASH, calculate_hash, verify_chain
@@ -40,7 +40,7 @@ class Reading(BaseModel):
     humidity_pct: float
 
 
-@app.post("/readings")
+@app.post("/readings", status_code=201)
 def save_reading(reading: Reading):
     conn = get_db()
     # T12: lock the database while we read the last hash and save the new reading,
@@ -74,7 +74,8 @@ def latest_reading():
     ).fetchone()
     conn.close()
     if row is None:
-        return {"message": "no readings yet"}
+        # 404, because there is no reading to give back yet (action from the 22 Oct stand-up)
+        raise HTTPException(status_code=404, detail="no readings yet")
     return {
         "id": row[0],
         "device_id": row[1],
