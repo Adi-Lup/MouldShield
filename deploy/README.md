@@ -41,7 +41,8 @@ People open the dashboard at **https://d15ad8kcnyn7ke.cloudfront.net**. CloudFro
 | Origin | `ec2-3-9-91-235.eu-west-2.compute.amazonaws.com`, HTTP only, port 80 | The server only speaks HTTP. HTTPS is between the user and CloudFront |
 | Viewer protocol | Redirect HTTP to HTTPS | Nobody uses the dashboard without HTTPS |
 | Allowed methods | GET, HEAD | Same rule as `server.py`: from outside you can only read |
-| Extra behaviour `/api/photos` | All methods, CachingDisabled, AllViewer | The only path where CloudFront lets a POST through (photo upload, T18) |
+| Extra behaviour `/api/photos` | All methods, CachingDisabled, AllViewer | CloudFront lets a POST through here for the photo upload (T18) |
+| Extra behaviour `/api/report` | All methods, CachingDisabled, AllViewer | Same for the report button (T13), added on 27 October |
 | Cache policy | CachingDisabled | The readings change every 15 seconds, so nothing is cached |
 | Response headers | SecurityHeadersPolicy | Adds browser security headers (for example HSTS) for free |
 | WAF | Not enabled | It would cost about $14 a month. Logged as a risk and as future work |
@@ -50,13 +51,11 @@ Because port 80 on the server only accepts CloudFront, `http://3.9.91.235` does 
 
 ## What people can do from outside
 
-Anyone can open the dashboard and read the data (`/api/readings/latest`, `/api/verify`, Swagger at `/api/docs`). Anything that would change data (POST, PUT, DELETE) is blocked by `backend/server.py` unless it comes from inside the server. The only exception is `POST /api/photos` (T18), which checks the file and allows 20 photos in any 24 hours.
+Anyone can open the dashboard and read the data (`/api/readings/latest`, `/api/verify`, Swagger at `/api/docs`). Anything that would change data (POST, PUT, DELETE) is blocked by `backend/server.py` unless it comes from inside the server. There are two exceptions: `POST /api/photos` (T18), which checks the file and allows 20 photos in any 24 hours, and `POST /api/report` (T13), which saves no readings and calls Bedrock at most 50 times in any 24 hours (after that it uses a fixed text).
 
 So a reading can only get into the database one way: device, then AWS IoT Core, then the subscriber on the server. Nobody on the internet can add fake readings to the hash chain.
 
-For now this also blocks `POST /api/report`, so the report button will not work on the server yet. When T13 is ready we need two changes: allow that route in `server.py` with a limit (every report calls Bedrock and costs money), and change the allowed methods in CloudFront to include POST.
-
-`main.py` is not changed, so on our own computers we still run `uvicorn main:app` and the dashboard with `run.py`, as before.
+`server.py` does not change how `main.py` works, so on our own computers we still run `uvicorn main:app` and the dashboard with `run.py`, as before.
 
 ## Install the services
 

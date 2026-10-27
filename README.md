@@ -96,7 +96,7 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 | POST | `/readings` | Save a new reading and link it to the hash chain | Working (T07, T12) |
 | GET | `/readings/latest` | Return the most recent reading | Working (T07) |
 | GET | `/verify` | Check the hash chain and report "OK" or "Tampered" | Working (T12) |
-| POST | `/report` | Create the AI explanation and the landlord letter | Planned (T13) |
+| POST | `/report` | Create the AI explanation and the landlord letter | Working (T10, T13) |
 | POST | `/photos` | Add a photo of the damp; AI describes it (server only) | Working (T18) |
 | GET | `/photos` | List the photos with their AI description (server only) | Working (T18) |
 | GET | `/photos/{id}/image` | Return a photo, after checking it was not changed (server only) | Working (T18) |
