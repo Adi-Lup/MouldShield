@@ -147,6 +147,31 @@ class PhotoTests(unittest.TestCase):
         r = self.client.post("/api/photos", content=b"x", headers={"Content-Length": str(20 * 1024 * 1024)})
         self.assertEqual(r.status_code, 413)
 
+    def test_too_big_without_content_length_is_stopped_while_reading(self):
+        # A request sent in chunks has no Content-Length header to check first.
+        # We talk to the app directly (ASGI), so we can count how much it really reads.
+        import asyncio
+        import server
+        read = []
+        sent = {}
+
+        async def receive():
+            read.append(1)
+            return {"type": "http.request", "body": b"x" * (1024 * 1024), "more_body": len(read) < 100}
+
+        async def send(message):
+            if message["type"] == "http.response.start":
+                sent["status"] = message["status"]
+
+        scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1", "method": "POST",
+                 "scheme": "http", "path": "/api/photos", "raw_path": b"/api/photos", "root_path": "",
+                 "query_string": b"", "headers": [(b"content-type", b"image/jpeg")],
+                 "client": ("203.0.113.5", 1234), "server": ("testserver", 80)}
+        asyncio.run(server.app(scope, receive, send))
+        self.assertEqual(sent["status"], 413)
+        self.assertLess(len(read), 30, "the server should stop soon after 15 MB, not read all 100 MB")
+        self.assertEqual(self.bedrock.calls, 0)
+
     def test_limit_of_20_in_24_hours(self):
         small = io.BytesIO()
         Image.new("RGB", (100, 100)).save(small, "JPEG")

@@ -286,11 +286,17 @@ async def upload_photo(request: Request, confirm: bool = False):
     length = request.headers.get("content-length", "0")
     if not length.isdigit() or int(length) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="The photo is too big (15 MB at most).")
-    body = await request.body()
+    # Read the photo in pieces and stop at 15 MB. A request can come without a
+    # Content-Length (sent in chunks), so we cannot trust the header alone, and we
+    # never want a huge upload to fill the memory of our small server.
+    body = bytearray()
+    async for chunk in request.stream():
+        body.extend(chunk)
+        if len(body) > MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=413, detail="The photo is too big (15 MB at most).")
+    body = bytes(body)
     if not body:
         raise HTTPException(status_code=400, detail="No photo received.")
-    if len(body) > MAX_UPLOAD_BYTES:
-        raise HTTPException(status_code=413, detail="The photo is too big (15 MB at most).")
 
     clean_pending()
     original_sha256 = hashlib.sha256(body).hexdigest()
