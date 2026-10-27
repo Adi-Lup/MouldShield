@@ -31,6 +31,9 @@
     '.photo-ask{background:#fff1c4;border:2px solid #8e7021;color:#4c3600;border-radius:10px;padding:16px 18px;margin:18px 0}' +
     '.photo-ask p{font-size:18px;color:#4c3600;margin:0 0 10px}' +
     '.photo-ask .photo-ai{font-style:italic}' +
+    '.photo-ask-body{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:16px;align-items:start;margin-bottom:6px}' +
+    '.photo-ask-body.no-preview{grid-template-columns:1fr}' +
+    '.photo-preview{width:100%;height:auto;border-radius:8px;border:1px solid #8e7021;display:block}' +
     '.photo-ask-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}' +
     '.photo-ask-buttons button{min-height:56px;padding:12px 22px;border-radius:10px;font-size:19px;font-weight:700;cursor:pointer;border:2px solid #173d2b}' +
     '.photo-yes{background:#173d2b;color:#fff}.photo-no{background:#fff;color:#173d2b}' +
@@ -40,7 +43,7 @@
     '.photo-item p{margin:0 0 10px;font-size:18px}' +
     '.photo-item .photo-meta{font-size:16px;color:#35493c}' +
     '.photo-note{background:#fff1c4;color:#4c3600;border-radius:6px;padding:8px 12px;font-size:16px;display:inline-block}' +
-    '@media(max-width:640px){.photo-item{grid-template-columns:1fr}.photo-button,.photo-ask-buttons button{width:100%;min-width:0}}' +
+    '@media(max-width:640px){.photo-item,.photo-ask-body{grid-template-columns:1fr}.photo-button,.photo-ask-buttons button{width:100%;min-width:0}}' +
     '@media print{.photo-steps,.photo-button,.photo-status,.photo-ask{display:none!important}.photo-item{break-inside:avoid;border:0;padding:0}}';
   document.head.appendChild(style);
 
@@ -89,8 +92,25 @@
   var ask = el('div', { 'class': 'photo-ask', id: 'photo-ask', role: 'alertdialog', 'aria-labelledby': 'photo-ask-title' });
   ask.hidden = true;
   ask.appendChild(el('p', { id: 'photo-ask-title' }, 'This photo does not seem to show damp or mould.'));
+  // Small preview of the chosen photo, so the tenant knows which photo the question is about.
+  // It comes from the phone itself; nothing more is sent to the server.
+  var askBody = el('div', { 'class': 'photo-ask-body' });
+  var preview = el('img', { 'class': 'photo-preview', alt: 'The photo you chose' });
   var askAi = el('p', { 'class': 'photo-ai' });
-  ask.appendChild(askAi);
+  askBody.appendChild(preview);
+  askBody.appendChild(askAi);
+  ask.appendChild(askBody);
+  var previewUrl = null;
+  preview.addEventListener('error', function () {
+    // Some browsers cannot show HEIC photos (for example Chrome on Windows): we just hide the preview
+    preview.hidden = true;
+    askBody.classList.add('no-preview');
+  });
+  function clearPreview() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+    preview.removeAttribute('src');
+  }
   ask.appendChild(el('p', {}, 'Do you still want to add it to your report as evidence?'));
   var askButtons = el('div', { 'class': 'photo-ask-buttons' });
   var yes = el('button', { type: 'button', 'class': 'photo-yes', id: 'photo-yes' }, 'Yes, add it');
@@ -185,6 +205,11 @@
           waitingFile = file;
           say('', '');
           askAi.textContent = 'AI: ' + data.description;
+          clearPreview();
+          preview.hidden = false;
+          askBody.classList.remove('no-preview');
+          previewUrl = URL.createObjectURL(file);
+          preview.src = previewUrl;
           ask.hidden = false;
           yes.focus();
           return;
@@ -210,10 +235,11 @@
     send(file, false);
   });
 
-  yes.addEventListener('click', function () { if (waitingFile) send(waitingFile, true); });
+  yes.addEventListener('click', function () { if (waitingFile) send(waitingFile, true).then(clearPreview); });
   no.addEventListener('click', function () {
     waitingFile = null;
     ask.hidden = true;
+    clearPreview();
     say('info', 'Nothing was saved. Press "Add a photo" to choose another one.');
     button.focus();
   });
