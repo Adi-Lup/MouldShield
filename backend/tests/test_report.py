@@ -85,7 +85,11 @@ class ReportTest(unittest.TestCase):
         letter = result["letter"]
 
         self.assertEqual(result["risk"], "HIGH")
-        self.assertIn("Request for repair: damp in the [room] at [your address]", letter)
+        self.assertIn("Humidity readings in the [room] at [your address]", letter)
+        self.assertIn("the readings have been higher than I expected", letter)
+        # The sensor measures humidity, so the letter never says there is damp or mould
+        self.assertNotIn("damp", letter.lower())
+        self.assertNotIn("mould", letter.lower())
         self.assertIn("27 October 2026", letter)
         self.assertIn("- average humidity over the last 7 days:", letter)
         # 7 days with 30 minutes above 70 %, plus the last reading: about 4 hours
@@ -94,8 +98,8 @@ class ReportTest(unittest.TestCase):
         self.assertIn("- highest reading: 75% on", letter)
         self.assertIn("- last reading: 72% at 18.4 °C on 26 October at 17:20", letter)
         self.assertIn("found all {:,} readings unchanged".format(total), letter)
-        self.assertIn("Please reply within 14 days", letter)
-        self.assertTrue(letter.endswith("Yours sincerely,\n[Your name]"))
+        self.assertIn("Could we arrange a time for you", letter)
+        self.assertTrue(letter.endswith("Kind regards,\n[Your name]"))
 
     def test_numbers_in_the_request_are_not_used(self):
         # The route only takes the id; the letter must show what is in the database
@@ -103,6 +107,9 @@ class ReportTest(unittest.TestCase):
         result = report.make_report(1, "en", today=TODAY)
         self.assertEqual(result["risk"], "LOW")
         self.assertIn("- last reading: 55% at 18.0 °C", result["letter"])
+        # Low readings: the letter does not say they are high
+        self.assertIn("I would like to share the readings with you", result["letter"])
+        self.assertNotIn("higher than I expected", result["letter"])
 
     def test_tampered_data_is_not_called_unchanged(self):
         self.week_of_readings()

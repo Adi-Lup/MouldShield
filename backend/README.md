@@ -155,6 +155,7 @@ The answer:
 - `explanation`: two or three sentences in English (`en`), Romanian (`ro`) or Polish (`pl`), written by Claude Haiku 4.5 on Amazon Bedrock from the numbers only (no personal data is sent). Each one is saved, so changing the language back and forth does not call Bedrock again.
 - If Bedrock is not available (for example on our own computers without AWS), the answer is not plain text, or the limit of 50 calls in 24 hours is reached, the explanation is a fixed text in the same language and `explanation_source` is `fixed`. The report always works.
 - `letter`: in English, filled in from the database: the average humidity over the 7 days up to the reading (or since the first reading, if there is less than a week), the time above 70%, the highest reading, the reading itself, and the result of the hash chain check. The sentence about the readings being unchanged is only added when `GET /verify` would answer `OK`. The parts in [brackets] are for the tenant to fill in.
+- The letter only describes the readings and asks the landlord to look at the room. It does not say there is damp or mould, because the sensor measures humidity, not damp. It only says the readings are higher than expected when they are above 60% or went above 70% in the week.
 - `404` if the reading does not exist, `422` if the language is not `en`, `ro` or `pl`.
 
 On the EC2 server `POST /api/report` is open from outside (`server.py`), like the photo upload. It saves no readings, and the Bedrock limit stops it being used to spend our credit.

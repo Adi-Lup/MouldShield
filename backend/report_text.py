@@ -1,7 +1,9 @@
 # report_text.py - T13: the text of the report
 #
 # - week_stats(): the numbers for the letter (average, time above 70 %, highest reading)
-# - build_letter(): the letter to the landlord, always in English, filled in from the database
+# - build_letter(): the letter to the landlord, always in English, filled in from the database.
+#   It only describes the readings. It does not say there is damp or mould, because the
+#   sensor measures humidity, not damp.
 # - fixed_explanation(): a short explanation in English, Romanian or Polish, used when
 #   the AI explanation is not available (no AWS, Bedrock down, or the daily limit reached)
 # - explanation_prompt() and clean_answer(): for the AI explanation in report.py
@@ -97,6 +99,16 @@ def build_letter(latest, stats, check, today):
     else:
         average_label = "average humidity since " + day_text(stats["first"])
 
+    # Only say the readings are high when they are
+    high = (risk_level(latest["humidity_pct"]) != "LOW" or risk_level(stats["average"]) != "LOW"
+            or stats["seconds_above"] > 0)
+    if high:
+        opening = ("I have been keeping track of the humidity in the [room] with a sensor, "
+                   "and the readings have been higher than I expected.")
+    else:
+        opening = ("I have been keeping track of the humidity in the [room] with a sensor, "
+                   "and I would like to share the readings with you.")
+
     lines = [
         "[Your name]",
         "[Your address]",
@@ -105,16 +117,16 @@ def build_letter(latest, stats, check, today):
         "",
         "Dear [landlord's name],",
         "",
-        "Request for repair: damp in the [room] at [your address]",
+        "Humidity readings in the [room] at [your address]",
         "",
-        "I am reporting damp in the [room]. [Describe what you have seen and where, "
-        "for example black marks above the window.]",
+        opening + " [Add anything you have noticed, for example condensation on the "
+        "window in the morning.]",
         "",
-        "A humidity sensor in the room has recorded:",
+        "The sensor has recorded:",
         "- %s: %d%%" % (average_label, round(stats["average"])),
         "- time above 70%%: %s" % time_above_text(stats["seconds_above"]),
         "- highest reading: %d%% on %s" % (round(stats["highest"]), day_text(stats["highest_at"])),
-        "- last reading: %d%% at %.1f °C on %s at %s" % (
+        "- last reading: %d%% at %.1f \u00b0C on %s at %s" % (
             round(latest["humidity_pct"]), latest["temperature_c"],
             day_text(taken), clock_text(taken)),
         "",
@@ -131,10 +143,10 @@ def build_letter(latest, stats, check, today):
         ]
 
     lines += [
-        "Please reply within 14 days to arrange an inspection and let me know what work "
-        "you plan to do. I can send you the full readings and photos.",
+        "Could we arrange a time for you, or someone you choose, to have a look at the room? "
+        "I am happy to send you the full readings.",
         "",
-        "Yours sincerely,",
+        "Kind regards,",
         "[Your name]",
     ]
     return "\n".join(lines)
