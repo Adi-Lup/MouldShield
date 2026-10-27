@@ -22,6 +22,14 @@ Both run as the normal `ubuntu` user, start by themselves when the server boots 
 2. Clone the repository to `~/mouldshield`, then create `backend/.venv` and run `pip install -r requirements.txt`.
 3. Create `~/Projects/mouldshield-certs` (`chmod 700`) and copy only the three subscriber files into it with `scp`: `AmazonRootCA1.pem`, `subscriber-cert.pem.crt` and `subscriber-private.pem.key` (`chmod 600`). The device files never go on the server.
 
+## Photo evidence (T18)
+
+- S3 bucket `mouldshield-photos` (London, private, all public access blocked, default encryption).
+- IAM role `mouldshield-ec2-role` on the server, with only the policy `mouldshield-ec2-photos-policy`: put and get objects in `mouldshield-photos`, and call Claude Haiku 4.5 through the EU inference profile `eu.anthropic.claude-haiku-4-5-20251001-v1:0`. No AWS keys on the server.
+- `backend/photos.py` turns any photo (JPG, PNG, WebP or HEIC from an iPhone) into a clean JPEG of at most 1568 px, asks Bedrock for a short description, and saves the JPEG in S3. The database keeps the SHA-256 of the original file and of the JPEG, the upload time, the date and phone from the photo, the location (private) and a hash of the whole record.
+- `dashboard/photos.js` adds the "Photo evidence" part to the report page. `server.py` adds it to the page, so the existing dashboard files are not changed.
+- At most 12 photos a day. Tests: `cd backend` then `python -m unittest discover tests` (they use fake AWS clients).
+
 ## HTTPS with CloudFront
 
 People open the dashboard at **https://d15ad8kcnyn7ke.cloudfront.net**. CloudFront gives us HTTPS with a free AWS certificate, so Chrome does not show the "not secure" warning, and we do not need to buy a domain.
@@ -32,6 +40,7 @@ People open the dashboard at **https://d15ad8kcnyn7ke.cloudfront.net**. CloudFro
 | Origin | `ec2-3-9-91-235.eu-west-2.compute.amazonaws.com`, HTTP only, port 80 | The server only speaks HTTP. HTTPS is between the user and CloudFront |
 | Viewer protocol | Redirect HTTP to HTTPS | Nobody uses the dashboard without HTTPS |
 | Allowed methods | GET, HEAD | Same rule as `server.py`: from outside you can only read |
+| Extra behaviour `/api/photos` | All methods, CachingDisabled, AllViewer | The only path where CloudFront lets a POST through (photo upload, T18) |
 | Cache policy | CachingDisabled | The readings change every 15 seconds, so nothing is cached |
 | Response headers | SecurityHeadersPolicy | Adds browser security headers (for example HSTS) for free |
 | WAF | Not enabled | It would cost about $14 a month. Logged as a risk and as future work |
@@ -40,7 +49,7 @@ Because port 80 on the server only accepts CloudFront, `http://3.9.91.235` does 
 
 ## What people can do from outside
 
-Anyone can open the dashboard and read the data (`/api/readings/latest`, `/api/verify`, Swagger at `/api/docs`). Anything that would change data (POST, PUT, DELETE) is blocked by `backend/server.py` unless it comes from inside the server.
+Anyone can open the dashboard and read the data (`/api/readings/latest`, `/api/verify`, Swagger at `/api/docs`). Anything that would change data (POST, PUT, DELETE) is blocked by `backend/server.py` unless it comes from inside the server. The only exception is `POST /api/photos` (T18), which checks the file and allows 12 photos a day.
 
 So a reading can only get into the database one way: device, then AWS IoT Core, then the subscriber on the server. Nobody on the internet can add fake readings to the hash chain.
 
@@ -81,7 +90,7 @@ git pull
 sudo systemctl restart mouldshield-api mouldshield-subscriber
 ```
 
-If `requirements.txt` changed, run `backend/.venv/bin/pip install -r backend/requirements.txt` before the restart. If a `.service` file changed, copy it again and run `sudo systemctl daemon-reload`.
+If `requirements.txt` changed, run `backend/.venv/bin/pip install -r backend/requirements.txt` before the restart (for example after T18, which added Pillow and pillow-heif). If a `.service` file changed, copy it again and run `sudo systemctl daemon-reload`.
 
 ## Backup if the device breaks (risk R1)
 

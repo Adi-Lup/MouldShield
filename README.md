@@ -97,6 +97,9 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 | GET | `/readings/latest` | Return the most recent reading | Working (T07) |
 | GET | `/verify` | Check the hash chain and report "OK" or "Tampered" | Working (T12) |
 | POST | `/report` | Create the AI explanation and the landlord letter | Planned (T13) |
+| POST | `/photos` | Add a photo of the damp; AI describes it (server only) | Working (T18) |
+| GET | `/photos` | List the photos with their AI description (server only) | Working (T18) |
+| GET | `/photos/{id}/image` | Return a photo, after checking it was not changed (server only) | Working (T18) |
 
 On the EC2 server the same endpoints are under `/api` (for example `/api/verify`), and from outside only GET requests are allowed.
 
@@ -126,12 +129,15 @@ The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 - Each team member has their own IAM user on AWS with MFA. The root account is not used for daily work.
 - A budget alert is set on the AWS account.
 - The dashboard is only reachable over HTTPS, through CloudFront. The EC2 server accepts HTTP only from CloudFront, and SSH only from the Scrum Master.
-- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain.
+- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain. The one exception is adding a photo (T18), with a limit of 12 photos a day.
+- Photos are saved in a private S3 bucket as a clean JPEG, without their hidden data. The location from the photo is kept only in the database on the server and is never sent back by the API (a test checks this).
+- The EC2 server has no AWS keys. It uses an IAM role that can only put and read photos in our bucket and call one Bedrock model.
 
 ## Limitations
 
 - Letters created by MouldShield are drafts, not legal advice.
 - AI describes photos of damp and mould. It does not diagnose anything.
+- The date and phone model in a photo come from its EXIF data, which anyone can edit. The stronger evidence is the SHA-256 of the uploaded file and the upload time from our server.
 
 ## Credits
 
