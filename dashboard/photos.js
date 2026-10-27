@@ -38,13 +38,22 @@
     '.photo-ask-buttons button{min-height:56px;padding:12px 22px;border-radius:10px;font-size:19px;font-weight:700;cursor:pointer;border:2px solid #173d2b}' +
     '.photo-yes{background:#173d2b;color:#fff}.photo-no{background:#fff;color:#173d2b}' +
     '.photo-list{display:grid;gap:20px;margin-top:10px}' +
+    '.photo-report-title{font-size:19px;margin:22px 0 4px}' +
+    '.photo-history{margin-top:22px}' +
+    '.photo-history>summary{display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 18px;border:2px solid #617761;border-radius:10px;' +
+    'background:#fff;color:#173d2b;font-size:19px;font-weight:700;cursor:pointer;list-style:none}' +
+    '.photo-history>summary::-webkit-details-marker{display:none}' +
+    '.photo-history>summary::before{content:"\\25B6";font-size:15px;transition:transform .2s}' +
+    '.photo-history[open]>summary::before{transform:rotate(90deg)}' +
+    '.photo-history>summary:hover{background:#e8f0e4}' +
+    '.photo-history[open]>summary{margin-bottom:14px}' +
     '.photo-item{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px;border:1px solid #9aaf9e;border-radius:10px;padding:16px;background:#fff}' +
     '.photo-item img{width:100%;height:auto;border-radius:8px;display:block}' +
     '.photo-item p{margin:0 0 10px;font-size:18px}' +
     '.photo-item .photo-meta{font-size:16px;color:#35493c}' +
     '.photo-note{background:#fff1c4;color:#4c3600;border-radius:6px;padding:8px 12px;font-size:16px;display:inline-block}' +
     '@media(max-width:640px){.photo-item,.photo-ask-body{grid-template-columns:1fr}.photo-button,.photo-ask-buttons button{width:100%;min-width:0}}' +
-    '@media print{.photo-steps,.photo-button,.photo-status,.photo-ask{display:none!important}.photo-item{break-inside:avoid;border:0;padding:0}}';
+    '@media print{.photo-steps,.photo-button,.photo-status,.photo-ask,.photo-history{display:none!important}.photo-item{break-inside:avoid;border:0;padding:0}}';
   document.head.appendChild(style);
 
   function el(tag, attrs, text) {
@@ -125,10 +134,37 @@
     'AI describes what it can see; it does not diagnose anything. The photo is saved without its hidden data. ' +
     'The date, the phone model and the location are kept privately as evidence and are never shown on this page.'));
 
+  // Photos added for this report. They are printed in the PDF.
+  var reportTitle = el('h4', { 'class': 'photo-report-title', id: 'photo-report-title' }, 'Photos in this report');
+  reportTitle.hidden = true;
+  section.appendChild(reportTitle);
+  var reportList = el('div', { 'class': 'photo-list', id: 'photo-report' });
+  section.appendChild(reportList);
+
+  // All photos ever saved, closed by default so the page stays short. Never printed.
+  var history = el('details', { 'class': 'photo-history', id: 'photo-history' });
+  var historyTitle = el('summary');
+  history.appendChild(historyTitle);
   var list = el('div', { 'class': 'photo-list' });
-  section.appendChild(list);
+  history.appendChild(list);
+  history.hidden = true;
+  section.appendChild(history);
 
   anchor.parentNode.insertBefore(section, anchor.nextSibling);
+
+  // The browser remembers which photos belong to this report, so a refresh does not remove them
+  // (like the letter draft, it stays in this browser only)
+  var STORE = 'mouldshield-report-photos-v1';
+  function reportIds() {
+    try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) { return []; }
+  }
+  function addToReport(id) {
+    var ids = reportIds();
+    if (ids.indexOf(id) === -1) ids.push(id);
+    try { localStorage.setItem(STORE, JSON.stringify(ids)); } catch (e) { /* storage blocked: kept until the page closes */ }
+    sessionIds.push(id);
+  }
+  var sessionIds = [];
 
   function say(kind, text) {
     status.className = 'photo-status' + (kind ? ' ' + kind : '');
@@ -160,6 +196,13 @@
       .then(function (photos) {
         list.textContent = '';
         photos.forEach(function (p) { list.appendChild(showPhoto(p)); });
+        var ids = reportIds().concat(sessionIds);
+        var inReport = photos.filter(function (p) { return ids.indexOf(p.id) !== -1; }).reverse();
+        reportList.textContent = '';
+        inReport.forEach(function (p) { reportList.appendChild(showPhoto(p)); });
+        reportTitle.hidden = inReport.length === 0;
+        historyTitle.textContent = 'Upload history (' + photos.length + (photos.length === 1 ? ' photo)' : ' photos)');
+        history.hidden = photos.length === 0;
       })
       .catch(function () {
         // For example on the local preview, where there is no photo service
@@ -215,9 +258,10 @@
           return;
         }
         waitingFile = null;
+        addToReport(data.id);
         return load().then(function () {
-          say('ok', 'Done. Your photo has been added below.');
-          if (list.firstChild) list.firstChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          say('ok', 'Done. Your photo has been added to this report.');
+          if (reportList.lastChild) reportList.lastChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       })
       .catch(function (e) { say('error', e.message === 'Failed to fetch' ? 'No connection to the website. Please check your internet and try again.' : e.message); })
