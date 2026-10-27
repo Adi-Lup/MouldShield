@@ -28,14 +28,20 @@
     '.photo-status.working{background:#fff1c4;border-color:#8e7021;color:#4c3600}' +
     '.photo-status.ok{background:#e4f3e8;border-color:#416e4a;color:#174b2e}' +
     '.photo-status.error{background:#fde8e9;border-color:#9a4350;color:#761821}' +
+    '.photo-ask{background:#fff1c4;border:2px solid #8e7021;color:#4c3600;border-radius:10px;padding:16px 18px;margin:18px 0}' +
+    '.photo-ask p{font-size:18px;color:#4c3600;margin:0 0 10px}' +
+    '.photo-ask .photo-ai{font-style:italic}' +
+    '.photo-ask-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}' +
+    '.photo-ask-buttons button{min-height:56px;padding:12px 22px;border-radius:10px;font-size:19px;font-weight:700;cursor:pointer;border:2px solid #173d2b}' +
+    '.photo-yes{background:#173d2b;color:#fff}.photo-no{background:#fff;color:#173d2b}' +
     '.photo-list{display:grid;gap:20px;margin-top:10px}' +
     '.photo-item{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px;border:1px solid #9aaf9e;border-radius:10px;padding:16px;background:#fff}' +
     '.photo-item img{width:100%;height:auto;border-radius:8px;display:block}' +
     '.photo-item p{margin:0 0 10px;font-size:18px}' +
     '.photo-item .photo-meta{font-size:16px;color:#35493c}' +
     '.photo-note{background:#fff1c4;color:#4c3600;border-radius:6px;padding:8px 12px;font-size:16px;display:inline-block}' +
-    '@media(max-width:640px){.photo-item{grid-template-columns:1fr}.photo-button{width:100%;min-width:0}}' +
-    '@media print{.photo-steps,.photo-button,.photo-status{display:none!important}.photo-item{break-inside:avoid;border:0;padding:0}}';
+    '@media(max-width:640px){.photo-item{grid-template-columns:1fr}.photo-button,.photo-ask-buttons button{width:100%;min-width:0}}' +
+    '@media print{.photo-steps,.photo-button,.photo-status,.photo-ask{display:none!important}.photo-item{break-inside:avoid;border:0;padding:0}}';
   document.head.appendChild(style);
 
   function el(tag, attrs, text) {
@@ -79,6 +85,22 @@
   var status = el('div', { id: 'photo-status', 'class': 'photo-status', role: 'status', 'aria-live': 'polite' });
   section.appendChild(status);
 
+  // Shown only when AI sees no damp: the tenant decides if the photo is still evidence
+  var ask = el('div', { 'class': 'photo-ask', id: 'photo-ask', role: 'alertdialog', 'aria-labelledby': 'photo-ask-title' });
+  ask.hidden = true;
+  ask.appendChild(el('p', { id: 'photo-ask-title' }, 'This photo does not seem to show damp or mould.'));
+  var askAi = el('p', { 'class': 'photo-ai' });
+  ask.appendChild(askAi);
+  ask.appendChild(el('p', {}, 'Do you still want to add it to your report as evidence?'));
+  var askButtons = el('div', { 'class': 'photo-ask-buttons' });
+  var yes = el('button', { type: 'button', 'class': 'photo-yes', id: 'photo-yes' }, 'Yes, add it');
+  var no = el('button', { type: 'button', 'class': 'photo-no', id: 'photo-no' }, 'No, choose another photo');
+  askButtons.appendChild(yes);
+  askButtons.appendChild(no);
+  ask.appendChild(askButtons);
+  section.appendChild(ask);
+  var waitingFile = null;
+
   section.appendChild(el('p', { 'class': 'muted' },
     'AI describes what it can see; it does not diagnose anything. The photo is saved without its hidden data. ' +
     'The date, the phone model and the location are kept privately as evidence and are never shown on this page.'));
@@ -89,7 +111,7 @@
   anchor.parentNode.insertBefore(section, anchor.nextSibling);
 
   function say(kind, text) {
-    status.className = 'photo-status ' + kind;
+    status.className = 'photo-status' + (kind ? ' ' + kind : '');
     status.textContent = text;
   }
 
@@ -134,21 +156,19 @@
 
   // One press: the button opens the camera or the photo library
   button.addEventListener('click', function () {
+    ask.hidden = true;
+    waitingFile = null;
     input.value = '';
     input.click();
   });
 
-  // As soon as a photo is chosen, it is sent. No second button to press.
-  input.addEventListener('change', function () {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    if (file.size > MAX_BYTES) {
-      say('error', 'This photo is too big (more than 15 MB). Please choose a smaller photo.');
-      return;
-    }
+  function send(file, confirm) {
     busy(true);
-    say('working', 'Sending your photo and asking AI to describe it. This takes a few seconds, please wait…');
-    fetch(base + '/photos', {
+    ask.hidden = true;
+    say('working', confirm
+      ? 'Adding your photo to the report, please wait…'
+      : 'Sending your photo and asking AI to describe it. This takes a few seconds, please wait…');
+    return fetch(base + '/photos' + (confirm ? '?confirm=true' : ''), {
       method: 'POST',
       headers: { 'Content-Type': file.type || 'application/octet-stream' },
       body: file
@@ -159,7 +179,17 @@
           return data;
         });
       })
-      .then(function () {
+      .then(function (data) {
+        if (data.needs_confirmation) {
+          // AI saw no damp: nothing is saved yet, the tenant chooses
+          waitingFile = file;
+          say('', '');
+          askAi.textContent = 'AI: ' + data.description;
+          ask.hidden = false;
+          yes.focus();
+          return;
+        }
+        waitingFile = null;
         return load().then(function () {
           say('ok', 'Done. Your photo has been added below.');
           if (list.firstChild) list.firstChild.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -167,6 +197,25 @@
       })
       .catch(function (e) { say('error', e.message === 'Failed to fetch' ? 'No connection to the website. Please check your internet and try again.' : e.message); })
       .then(function () { busy(false); });
+  }
+
+  // As soon as a photo is chosen, it is sent. No second button to press.
+  input.addEventListener('change', function () {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    if (file.size > MAX_BYTES) {
+      say('error', 'This photo is too big (more than 15 MB). Please choose a smaller photo.');
+      return;
+    }
+    send(file, false);
+  });
+
+  yes.addEventListener('click', function () { if (waitingFile) send(waitingFile, true); });
+  no.addEventListener('click', function () {
+    waitingFile = null;
+    ask.hidden = true;
+    say('info', 'Nothing was saved. Press "Add a photo" to choose another one.');
+    button.focus();
   });
 
   load();

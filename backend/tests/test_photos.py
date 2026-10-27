@@ -33,12 +33,14 @@ class FakeS3:
 
 
 class FakeBedrock:
+    # By default it "sees" mould. A test can change self.answer to try other replies.
     def __init__(self):
         self.calls = 0
+        self.answer = '{"damp_visible": true, "description": "Dark spots of mould in the top corner of the wall."}'
 
     def converse(self, **kwargs):
         self.calls += 1
-        return {"output": {"message": {"content": [{"text": "Dark spots of mould in the top corner of the wall."}]}}}
+        return {"output": {"message": {"content": [{"text": self.answer}]}}}
 
 
 def dms(value):
@@ -167,6 +169,38 @@ class PhotoTests(unittest.TestCase):
         self.assertEqual(self.client.post("/api/readings", json=reading).status_code, 403)
         self.assertEqual(self.client.post("/api/photos/", content=b"x").status_code, 403)
         self.assertEqual(self.client.delete("/api/photos").status_code, 403)
+
+    def test_no_damp_asks_the_tenant_and_saves_nothing_yet(self):
+        self.bedrock.answer = '{"damp_visible": false, "description": "A sofa. No damp or mould can be seen."}'
+        r = self.upload(make_photo("JPEG"))
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertEqual(r.json(), {"saved": False, "needs_confirmation": True, "description": "A sofa. No damp or mould can be seen."})
+        self.assertEqual(self.s3.objects, {})
+        self.assertEqual(self.client.get("/api/photos").json(), [])
+
+    def test_yes_add_it_saves_without_asking_ai_again(self):
+        self.bedrock.answer = '{"damp_visible": false, "description": "A clean white wall."}'
+        photo = make_photo("JPEG")
+        self.assertEqual(self.upload(photo).status_code, 200)
+        r = self.client.post("/api/photos?confirm=true", content=photo, headers={"Content-Type": "image/jpeg"})
+        self.assertEqual(r.status_code, 201, r.text)
+        self.assertEqual(r.json()["description"], "A clean white wall.")
+        self.assertEqual(self.bedrock.calls, 1)
+        self.assertEqual(len(self.s3.objects), 1)
+
+    def test_answer_that_is_not_json_is_still_saved(self):
+        self.bedrock.answer = "There is condensation on the window."
+        r = self.upload(make_photo("JPEG"))
+        self.assertEqual(r.status_code, 201, r.text)
+        self.assertEqual(r.json()["description"], "There is condensation on the window.")
+
+    def test_photos_the_tenant_did_not_keep_count_for_the_daily_limit(self):
+        self.bedrock.answer = '{"damp_visible": false, "description": "Nothing to see."}'
+        small = io.BytesIO()
+        Image.new("RGB", (100, 100)).save(small, "JPEG")
+        for _ in range(12):
+            self.assertEqual(self.upload(small.getvalue()).status_code, 200)
+        self.assertEqual(self.upload(small.getvalue()).status_code, 429)
 
     def test_dashboard_page_gets_photos_script(self):
         page = self.client.get("/")

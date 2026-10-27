@@ -138,6 +138,8 @@ The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 - Letters created by MouldShield are drafts, not legal advice.
 - AI describes photos of damp and mould. It does not diagnose anything.
 - The date and phone model in a photo come from its EXIF data, which anyone can edit. The stronger evidence is the SHA-256 of the uploaded file and the upload time from our server.
+- When a photo is chosen in a browser on an iPhone, iOS often removes the EXIF data (always the location, by default). We saw this in our own test on 27 October, so for iPhone uploads the date and phone are usually missing.
+- If AI sees no damp in a photo, the tenant is asked if they still want to add it. AI can be wrong, so the tenant always decides.
 
 ## Credits
 

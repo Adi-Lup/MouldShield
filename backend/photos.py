@@ -9,10 +9,12 @@ import io
 import json
 import os
 import sqlite3
+import time
 from datetime import datetime, timezone
 
 import boto3
 from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 from PIL import Image, ImageOps, UnidentifiedImageError
 from pillow_heif import register_heif_opener
 from pydantic import BaseModel
@@ -36,12 +38,19 @@ Image.MAX_IMAGE_PIXELS = 60_000_000
 
 PROMPT = (
     "This photo was uploaded by a tenant as evidence for a damp and mould report. "
-    "In 2 or 3 short sentences of plain British English, describe only what you can see: "
-    "any signs of damp, mould, condensation, water stains or peeling paint, and where they are "
-    "(for example wall, ceiling or window frame). Do not guess the cause, do not give a diagnosis "
-    "and do not mention health. If the photo does not show a room or a surface, or you cannot see "
-    "any damp or mould, say so clearly."
+    "Answer with JSON only, in this form: "
+    '{"damp_visible": true or false, "description": "..."}. '
+    "damp_visible is true only if you can see damp, mould, condensation, water stains or peeling paint. "
+    "The description is 2 or 3 short sentences of plain British English that describe only what you can see "
+    "and where it is (for example wall, ceiling or window frame). Do not guess the cause, do not give a "
+    "diagnosis and do not mention health. If the photo does not show a room or a surface, or you cannot see "
+    "any damp or mould, say so clearly in the description."
 )
+
+# When AI sees no damp, the photo waits here until the tenant decides. If they press
+# "Yes, add it", we use this result again, so we do not pay Bedrock twice for one photo.
+PENDING_MINUTES = 15
+pending = {}
 
 router = APIRouter()
 
@@ -82,6 +91,9 @@ def get_db():
         )
         """
     )
+    # Every call to Bedrock is counted here, also for photos the tenant does not keep,
+    # so the daily limit really protects our AWS credit
+    conn.execute("CREATE TABLE IF NOT EXISTS photo_attempts (at TEXT NOT NULL)")
     return conn
 
 
@@ -144,6 +156,20 @@ def clean_jpeg(img):
     return out.getvalue()
 
 
+def read_answer(text):
+    # The model should answer with JSON. If it does not, we keep its text and treat the
+    # photo as relevant, so a tenant is never blocked because of a badly formatted answer.
+    start, end = text.find("{"), text.rfind("}")
+    try:
+        data = json.loads(text[start:end + 1])
+        description = str(data["description"]).strip()
+        if description:
+            return bool(data["damp_visible"]), description
+    except (ValueError, KeyError, TypeError):
+        pass
+    return True, text.strip()
+
+
 def describe(jpeg):
     answer = bedrock().converse(
         modelId=MODEL_ID,
@@ -154,9 +180,9 @@ def describe(jpeg):
                 {"text": PROMPT},
             ],
         }],
-        inferenceConfig={"maxTokens": 250, "temperature": 0},
+        inferenceConfig={"maxTokens": 300, "temperature": 0},
     )
-    return answer["output"]["message"]["content"][0]["text"].strip()
+    return read_answer(answer["output"]["message"]["content"][0]["text"])
 
 
 def record_hash(record):
@@ -191,8 +217,8 @@ def to_public(row):
 PUBLIC_COLUMNS = "id, uploaded_at, taken_at, camera, description, jpeg_sha256"
 
 
-def process_upload(body):
-    # Everything slow happens here (image work and AWS calls), outside the web loop
+def analyse(body):
+    # Everything slow happens here (image work and the Bedrock call), outside the web loop
     try:
         img = Image.open(io.BytesIO(body))
         img.load()
@@ -204,33 +230,58 @@ def process_upload(body):
     taken_at, camera, lat, lon = read_details(img)
     jpeg = clean_jpeg(img)
 
+    conn = get_db()
+    conn.execute("INSERT INTO photo_attempts (at) VALUES (?)", (datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),))
+    conn.commit()
+    conn.close()
     try:
-        description = describe(jpeg)
+        damp_visible, description = describe(jpeg)
     except Exception:
         raise HTTPException(status_code=502, detail="The photo description is not available right now. Please try again.")
 
-    uploaded_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    jpeg_sha256 = hashlib.sha256(jpeg).hexdigest()
-    s3_key = f"photos/{uploaded_at.replace(':', '-')}-{jpeg_sha256[:12]}.jpg"
-    s3().put_object(Bucket=BUCKET, Key=s3_key, Body=jpeg, ContentType="image/jpeg")
-
-    record = {
-        "uploaded_at": uploaded_at,
-        "s3_key": s3_key,
+    return {
         "original_sha256": hashlib.sha256(body).hexdigest(),
-        "jpeg_sha256": jpeg_sha256,
+        "jpeg": jpeg,
         "taken_at": taken_at,
         "camera": camera,
         "gps_lat": lat,
         "gps_lon": lon,
         "description": description,
+        "damp_visible": damp_visible,
+    }
+
+
+def save(result):
+    # Puts the clean JPEG in S3 and returns the record for the database
+    uploaded_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    jpeg_sha256 = hashlib.sha256(result["jpeg"]).hexdigest()
+    s3_key = f"photos/{uploaded_at.replace(':', '-')}-{jpeg_sha256[:12]}.jpg"
+    s3().put_object(Bucket=BUCKET, Key=s3_key, Body=result["jpeg"], ContentType="image/jpeg")
+
+    record = {
+        "uploaded_at": uploaded_at,
+        "s3_key": s3_key,
+        "original_sha256": result["original_sha256"],
+        "jpeg_sha256": jpeg_sha256,
+        "taken_at": result["taken_at"],
+        "camera": result["camera"],
+        "gps_lat": result["gps_lat"],
+        "gps_lon": result["gps_lon"],
+        "description": result["description"],
     }
     record["record_hash"] = record_hash(record)
     return record
 
 
+def clean_pending():
+    now = time.time()
+    for key in [k for k, (expires, _) in pending.items() if expires < now]:
+        del pending[key]
+
+
 @router.post("/photos", status_code=201, response_model=PhotoOut)
-async def upload_photo(request: Request):
+async def upload_photo(request: Request, confirm: bool = False):
+    # confirm=true means the tenant pressed "Yes, add it" after AI saw no damp
     length = request.headers.get("content-length", "0")
     if not length.isdigit() or int(length) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="The photo is too big (15 MB at most).")
@@ -240,16 +291,28 @@ async def upload_photo(request: Request):
     if len(body) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="The photo is too big (15 MB at most).")
 
-    # Daily limit, so nobody can use the upload to spend our AWS credit on Bedrock
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    conn = get_db()
-    count = conn.execute("SELECT COUNT(*) FROM photos WHERE uploaded_at LIKE ?", (today + "%",)).fetchone()[0]
-    conn.close()
-    if count >= MAX_PHOTOS_PER_DAY:
-        raise HTTPException(status_code=429, detail=f"The limit of {MAX_PHOTOS_PER_DAY} photos a day has been reached. Please try again tomorrow.")
+    clean_pending()
+    original_sha256 = hashlib.sha256(body).hexdigest()
+    result = pending.pop(original_sha256, (0, None))[1] if confirm else None
 
-    record = await run_in_threadpool(process_upload, body)
+    if result is None:
+        # Daily limit on calls to Bedrock, so nobody can use the upload to spend our AWS credit
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        conn = get_db()
+        count = conn.execute("SELECT COUNT(*) FROM photo_attempts WHERE at LIKE ?", (today + "%",)).fetchone()[0]
+        conn.close()
+        if count >= MAX_PHOTOS_PER_DAY:
+            raise HTTPException(status_code=429, detail=f"The limit of {MAX_PHOTOS_PER_DAY} photos a day has been reached. Please try again tomorrow.")
+        result = await run_in_threadpool(analyse, body)
 
+        if not result["damp_visible"] and not confirm:
+            # Nothing is saved yet: the tenant decides if this photo should be evidence
+            if len(pending) >= 20:
+                pending.pop(next(iter(pending)))
+            pending[original_sha256] = (time.time() + PENDING_MINUTES * 60, result)
+            return JSONResponse({"saved": False, "needs_confirmation": True, "description": result["description"]})
+
+    record = await run_in_threadpool(save, result)
     conn = get_db()
     columns = ", ".join(record)
     marks = ", ".join("?" for _ in record)
