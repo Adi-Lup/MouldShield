@@ -12,6 +12,7 @@ The API saves the readings in a SQLite file (`mouldshield.db`). On our own compu
 - `mqtt_subscriber.py`: brings the real device readings from AWS IoT Core into the API (T27, Adrian)
 - `risk.py`: the risk level of a reading, LOW, MODERATE or HIGH (T10)
 - `report.py` and `report_text.py`: `POST /report`, the explanation and the letter to the landlord (T13)
+- `forecast.py` and `condensation.py`: `GET /forecast`, the condensation warning for the next 48 hours (T17)
 
 ## Database (T06)
 
@@ -52,6 +53,8 @@ Open http://127.0.0.1:8000/docs to try it.
 - `GET /readings/latest` returns the last saved reading with its risk level, or `404` with `no readings yet` when the database is empty
 - `GET /verify` checks the hash chain and returns `OK`, or `Tampered` with the id of the first reading that was changed (T12)
 - `POST /report` returns the explanation and the letter to the landlord for one reading (T13)
+- `GET /forecast` returns the condensation warning for the next 48 hours and the outside temperatures (T17)
+- `GET /readings/history` returns the readings of the last 7 days for the dashboard graph (T17)
 
 Example reading (the same field names are used on the device and in the database):
 
@@ -161,6 +164,43 @@ The answer:
 
 On the EC2 server `POST /api/report` is open from outside (`server.py`), like the photo upload. It saves no readings, and the Bedrock limit stops it being used to spend our credit.
 
+## Condensation forecast (T17)
+
+`GET /forecast` warns the tenant before condensation happens (US5). It takes the last indoor reading from our database and the outside temperature for the next 48 hours from Open-Meteo, and answers in the format the dashboard expects:
+
+```json
+{
+  "available": true,
+  "condensation": {
+    "warning": "High condensation risk tonight",
+    "horizon_hours": 48,
+    "level": "HIGH",
+    "advice": "Keep the room heated and open a window for a few minutes after cooking or a shower. ...",
+    "dew_point_c": 15.4,
+    "coldest_surface_c": 15.0
+  },
+  "outside": {"now_c": 9, "tonight_min_c": 0, "tomorrow_c": 10},
+  "weather_code": 61,
+  "indoor_reading": {"id": 131, "timestamp": "2026-10-27T18:30:00Z", "temperature_c": 20.0, "humidity_pct": 75.0},
+  "updated_at": "2026-10-27T18:30:05Z",
+  "source": "Weather data by Open-Meteo.com"
+}
+```
+
+How the warning is worked out (`condensation.py`):
+
+1. The dew point of the room, from the last indoor temperature and humidity (Magnus formula). Below this temperature, the air leaves water on a surface.
+2. The temperature of the coldest inside surface, from the coldest outside temperature in the next 48 hours: `surface = outside + 0.75 x (inside - outside)`. 0.75 is the temperature factor fRsi that UK guidance (BRE IP1/06) asks a wall to reach to avoid mould.
+3. HIGH if that surface is at or below the dew point, MODERATE if it is within 2 °C of it (windows and corners are often colder than a wall), LOW otherwise. "Tonight" means until 09:00 the next morning.
+
+We assume the room stays at the last indoor reading, so this is an estimate for a warning, not a measurement.
+
+The location is London (our device has no GPS). It can be changed on the server with `MOULDSHIELD_LATITUDE` and `MOULDSHIELD_LONGITUDE`, and it is never sent back by the API. The dashboard asks every 15 seconds, so the server keeps the Open-Meteo answer for 30 minutes (and waits 5 minutes after a failure), which keeps us far below the free limit. If there is no indoor reading or no weather data, the answer is `{"available": false, "reason": "..."}`.
+
+`GET /readings/history` returns `{"readings": [...]}`: the readings of the last 7 days (up to the newest one) from the same device as the newest reading, oldest first, with the exact values. A week at one reading every 15 seconds is about 40,000 readings, so big answers are sent compressed (gzip) and an index on `device_id` and `timestamp` keeps the query quick.
+
+Weather data by [Open-Meteo.com](https://open-meteo.com/) (CC BY 4.0).
+
 ## Tests
 
 From the `backend` folder:
@@ -169,4 +209,4 @@ From the `backend` folder:
 python -m unittest discover tests
 ```
 
-`test_risk.py` and `test_report.py` use a temporary database and a fake Bedrock, so they never touch the real data or AWS.
+`test_risk.py`, `test_report.py`, `test_condensation.py` and `test_forecast.py` use a temporary database, a fake Bedrock and a fake Open-Meteo, so they never touch the real data, AWS or the internet.
