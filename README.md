@@ -8,6 +8,8 @@ Early warning for damp and mould in rented homes, with tamper-evident readings.
 
 CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
 
+**Live dashboard:** https://d15ad8kcnyn7ke.cloudfront.net
+
 ## What it does
 
 - A small device (M5StickS3 with an ENV III sensor) measures temperature and humidity in a room.
@@ -27,7 +29,7 @@ CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
   <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; the web dashboard and the PDF report show the results" width="900">
 </p>
 
-Green arrows work now (27 October 2026). The device sends real readings to AWS IoT Core, the subscriber saves them in SQLite through FastAPI, and the dashboard shows the latest reading with the "Data verified" badge. Dashed arrows are still planned. For now the back-end runs on a laptop, and it moves to EC2 in Sprint 3 (T16).
+Green arrows work now (27 October 2026). The device sends real readings to AWS IoT Core, the subscriber on our EC2 server saves them in SQLite through FastAPI, and the dashboard shows the latest reading with the "Data verified" badge. Dashed arrows are still planned. The dashboard is served over HTTPS through CloudFront (see `deploy/README.md`).
 
 ## Repository structure
 
@@ -64,7 +66,7 @@ To add a file without Git: open the right folder on GitHub, click **Add file**, 
 
 - Device: MicroPython on UiFlow2 firmware
 - Back-end: Python, FastAPI, SQL database
-- Cloud: AWS IoT Core, Amazon Bedrock, Amazon S3
+- Cloud: AWS IoT Core, Amazon EC2, Amazon CloudFront, Amazon Bedrock, Amazon S3
 - Weather: Open-Meteo
 - Project management: GitHub Projects (Scrum board)
 
@@ -96,6 +98,8 @@ Copy `.env.example` to `.env` in the project root and fill in your own values. T
 | GET | `/verify` | Check the hash chain and report "OK" or "Tampered" | Working (T12) |
 | POST | `/report` | Create the AI explanation and the landlord letter | Planned (T13) |
 
+On the EC2 server the same endpoints are under `/api` (for example `/api/verify`), and from outside only GET requests are allowed.
+
 The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 
 ## Team
@@ -121,6 +125,8 @@ The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 - Keys, passwords and device certificates are never committed. They stay in `.env` or in ignored files (see `.gitignore`).
 - Each team member has their own IAM user on AWS with MFA. The root account is not used for daily work.
 - A budget alert is set on the AWS account.
+- The dashboard is only reachable over HTTPS, through CloudFront. The EC2 server accepts HTTP only from CloudFront, and SSH only from the Scrum Master.
+- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain.
 
 ## Limitations
 

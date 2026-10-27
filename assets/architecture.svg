@@ -76,7 +76,7 @@
   <!-- EC2 server group -->
   <rect x="290" y="250" width="520" height="220" rx="14" fill="#F3F6FA" stroke="#13294B" stroke-width="1.5"/>
   <text x="392" y="274" font-size="13" font-weight="700" fill="#13294B">Back-end server</text>
-  <text x="796" y="430" font-size="11" fill="#4A5868" text-anchor="end">Runs on a laptop now, moves to EC2 in Sprint 3</text>
+  <text x="796" y="430" font-size="11" fill="#4A5868" text-anchor="end">Runs on Amazon EC2 (London) since 27 October</text>
 
   <!-- Subscriber -->
   <g>
@@ -187,6 +187,7 @@
 
   <!-- 9 FastAPI to dashboard (working) -->
   <path d="M540 374 C 520 470, 460 500, 440 548" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="494" y="440" font-size="10" fill="#13294B" text-anchor="end">HTTPS via CloudFront:</text>
   <text x="494" y="452" font-size="10" fill="#13294B" text-anchor="end">latest reading,</text>
   <text x="494" y="464" font-size="10" fill="#13294B" text-anchor="end">GET /verify</text>
 
