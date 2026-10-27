@@ -19,7 +19,7 @@
   <line x1="640" y1="38" x2="680" y2="38" stroke="#13866B" stroke-width="3" marker-end="url(#arrowGreen)"/>
   <text x="688" y="43" font-size="13" fill="#13294B">Working now</text>
   <line x1="790" y1="38" x2="830" y2="38" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
-  <text x="838" y="43" font-size="13" fill="#13294B">Planned (Sprint 2 to 3)</text>
+  <text x="838" y="43" font-size="13" fill="#13294B">Planned</text>
 
   <!-- AWS boundary -->
   <rect x="260" y="70" width="570" height="420" rx="16" fill="#FFF8EE" stroke="#FF9900" stroke-width="2" stroke-dasharray="8 6"/>
@@ -185,8 +185,10 @@
   <!-- 8 simulator to FastAPI (route below SQLite) -->
   <path d="M860 360 C 830 420, 680 420, 620 376" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
 
-  <!-- 9 FastAPI to dashboard -->
-  <path d="M540 374 C 520 470, 460 500, 440 548" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
+  <!-- 9 FastAPI to dashboard (working) -->
+  <path d="M540 374 C 520 470, 460 500, 440 548" stroke="#13866B" stroke-width="3" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="494" y="452" font-size="10" fill="#13294B" text-anchor="end">latest reading,</text>
+  <text x="494" y="464" font-size="10" fill="#13294B" text-anchor="end">GET /verify</text>
 
   <!-- 10 dashboard to report -->
   <path d="M590 610 L648 610" stroke="#13294B" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow)"/>
