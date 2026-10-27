@@ -144,6 +144,7 @@ def build_letter(latest, stats, check, today):
 
     lines += [
         "Could we arrange a time for you, or someone you choose, to have a look at the room? "
+        "I would be grateful for a reply within 10 working days. "
         "I am happy to send you the full readings.",
         "",
         "Kind regards,",

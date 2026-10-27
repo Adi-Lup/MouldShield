@@ -99,6 +99,7 @@ class ReportTest(unittest.TestCase):
         self.assertIn("- last reading: 72% at 18.4 °C on 26 October at 17:20", letter)
         self.assertIn("found all {:,} readings unchanged".format(total), letter)
         self.assertIn("Could we arrange a time for you", letter)
+        self.assertIn("I would be grateful for a reply within 10 working days.", letter)
         self.assertTrue(letter.endswith("Kind regards,\n[Your name]"))
 
     def test_numbers_in_the_request_are_not_used(self):
