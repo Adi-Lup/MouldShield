@@ -2,6 +2,7 @@
 # Saves the readings in a SQLite database file and gives them back with their risk level
 
 import sqlite3
+import time
 
 from datetime import timedelta
 
@@ -119,10 +120,25 @@ def verify():
     return verify_chain(rows)
 
 
+# The dashboard asks for the history every 15 seconds. We keep the answer for one
+# minute, so the database is not read again for every refresh and every viewer.
+HISTORY_CACHE_SECONDS = 60
+history_cache = {}
+
+
 @app.get("/readings/history")
 def readings_history():
     # T17: the readings of the last 7 days for the dashboard graph, oldest first.
     # Same device as the last reading, and the exact values, not rounded.
+    saved = history_cache.get(DB_FILE)
+    if saved and time.monotonic() - saved[0] < HISTORY_CACHE_SECONDS:
+        return saved[1]
+    answer = read_history()
+    history_cache[DB_FILE] = (time.monotonic(), answer)
+    return answer
+
+
+def read_history():
     conn = get_db()
     last = conn.execute(
         "SELECT device_id, timestamp FROM readings ORDER BY id DESC LIMIT 1"

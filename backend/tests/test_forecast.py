@@ -124,6 +124,7 @@ class HistoryTest(unittest.TestCase):
     def setUp(self):
         self.folder = tempfile.TemporaryDirectory()
         main.DB_FILE = os.path.join(self.folder.name, "test.db")
+        main.history_cache.clear()
 
     def tearDown(self):
         self.folder.cleanup()
@@ -140,6 +141,21 @@ class HistoryTest(unittest.TestCase):
 
     def test_empty(self):
         self.assertEqual(main.readings_history(), {"readings": []})
+
+    def test_answer_is_kept_for_one_minute(self):
+        save_readings(main.DB_FILE, [("mouldshield-01", NOW - timedelta(hours=1), 18.0, 60.0)])
+        self.assertEqual(len(main.readings_history()["readings"]), 1)
+        conn = sqlite3.connect(main.DB_FILE)
+        conn.execute("INSERT INTO readings (device_id, timestamp, temperature_c, humidity_pct) "
+                     "VALUES ('mouldshield-01', ?, 18.1, 61.0)", (NOW.strftime("%Y-%m-%dT%H:%M:%SZ"),))
+        conn.commit()
+        conn.close()
+        # Within the minute: the same answer, the database is not read again
+        self.assertEqual(len(main.readings_history()["readings"]), 1)
+        # After the minute: the new reading is there
+        at, answer = main.history_cache[main.DB_FILE]
+        main.history_cache[main.DB_FILE] = (at - 61, answer)
+        self.assertEqual(len(main.readings_history()["readings"]), 2)
 
 
 if __name__ == "__main__":
