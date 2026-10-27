@@ -1,0 +1,22 @@
+# T16: runs the FastAPI back-end on the EC2 server as a service.
+# Copy to /etc/systemd/system/ on the server (see deploy/README.md).
+
+[Unit]
+Description=MouldShield FastAPI back-end
+# Start only after the network is ready
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Run as the normal ubuntu user, not as root
+User=ubuntu
+WorkingDirectory=/home/ubuntu/mouldshield/backend
+# Use the uvicorn from the project .venv, so no activate step is needed
+ExecStart=/home/ubuntu/mouldshield/backend/.venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000
+# If the app stops for any reason, start it again after 5 seconds
+Restart=always
+RestartSec=5
+
+[Install]
+# Start the service when the server boots
+WantedBy=multi-user.target

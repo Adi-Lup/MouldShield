@@ -1,0 +1,21 @@
+# T16: runs the MQTT subscriber on the EC2 server as a service.
+# It takes the readings from AWS IoT Core and sends them to the FastAPI back-end.
+# Copy to /etc/systemd/system/ on the server (see deploy/README.md).
+
+[Unit]
+Description=MouldShield MQTT subscriber
+# Start after the network and after the back-end it sends readings to
+After=network-online.target mouldshield-api.service
+Wants=network-online.target mouldshield-api.service
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/mouldshield/backend
+# Print messages straight away, so they show up in the logs without a delay
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/ubuntu/mouldshield/backend/.venv/bin/python mqtt_subscriber.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

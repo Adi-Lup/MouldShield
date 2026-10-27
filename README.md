@@ -37,6 +37,7 @@ Green arrows work now (27 October 2026). The device sends real readings to AWS I
 | `device/` | MicroPython code for the M5StickS3 (UiFlow2 firmware) |
 | `dashboard/` | Web dashboard, mobile page and the system diagrams (Use Case, DFD) |
 | `docs/` | Product backlog, stand-up records, sprint reviews, test plan and results |
+| `deploy/` | Files to run the back-end on the AWS EC2 server (T16) |
 
 ## Where to put your files
 
