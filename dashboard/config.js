@@ -5,9 +5,9 @@ window.MOULDSHIELD_CONFIG = {
   endpoints: {
     latest: '/readings/latest',
     verify: '/verify', // Confirmed in Adi-Lup/MouldShield/backend/main.py.
-    history: null, // Configure when Sergiu provides the history endpoint.
-    report: '/report', // T13: route planned in the team's README; schema to agree.
-    forecast: null // T17: set the exact endpoint once supplied by Sergiu.
+    history: '/readings/history', // T17: the readings of the last 7 days.
+    report: '/report', // T13: explanation and letter (backend/README.md).
+    forecast: '/forecast' // T17: condensation warning and outside temperatures.
   },
   timeZone: 'Europe/London',
   refreshIntervalMs: 15000,
