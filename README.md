@@ -26,10 +26,10 @@ CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
 ## How it works
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; the web dashboard and the PDF report show the results" width="900">
+  <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; Amazon CloudFront serves everything over HTTPS to the web dashboard and the PDF report" width="900">
 </p>
 
-All arrows work on the live system (28 October 2026). The device sends real readings to AWS IoT Core and the subscriber on our EC2 server saves them in SQLite through FastAPI. The back-end uses Amazon Bedrock for the explanation, the landlord letter and the photo descriptions, keeps photos in a private S3 bucket and gets the weather from Open-Meteo for the condensation forecast. The dashboard and the PDF report are served over HTTPS through CloudFront (see `deploy/README.md`). The data simulator is only a backup if the device fails.
+All arrows work on the live system (28 October 2026). The device sends real readings to AWS IoT Core and the subscriber on our EC2 server saves them in SQLite through FastAPI. The back-end uses Amazon Bedrock for the explanation, the landlord letter and the photo descriptions, keeps photos in a private S3 bucket and gets the weather from Open-Meteo for the condensation forecast. The dashboard and the PDF report are served over HTTPS through CloudFront (see `deploy/README.md`). The server has no AWS keys: it uses an IAM role. The data simulator is only a backup if the device fails, so its arrow is dashed.
 
 ## Repository structure
 
@@ -65,7 +65,7 @@ To add a file without Git: open the right folder on GitHub, click **Add file**, 
 ## Tech stack
 
 - Device: MicroPython on UiFlow2 firmware
-- Back-end: Python, FastAPI, SQL database
+- Back-end: Python, FastAPI, SQLite
 - Cloud: AWS IoT Core, Amazon EC2, Amazon CloudFront, Amazon Bedrock, Amazon S3
 - Weather: Open-Meteo
 - Project management: GitHub Projects (Scrum board)
@@ -89,21 +89,38 @@ To see the dashboard, start the back-end first, then run `python run.py` in the 
 
 Copy `.env.example` to `.env` in the project root and fill in your own values. The `.env` file is never committed.
 
+## Tests
+
+```
+cd backend
+python -m unittest discover tests
+```
+
+```
+cd dashboard
+node --test tests/*.test.js
+python -m unittest discover tests
+```
+
+On 28 October 2026: 56 back-end tests, 23 dashboard JavaScript tests and 8 dashboard Python tests, all passing. The back-end tests use fake AWS and weather services, so they never call Bedrock, S3 or Open-Meteo.
+
 ## Endpoints
 
 | Method | Path | Purpose | Status |
 |--------|------|---------|--------|
 | POST | `/readings` | Save a new reading and link it to the hash chain | Working (T07, T12) |
-| GET | `/readings/latest` | Return the most recent reading | Working (T07) |
+| GET | `/readings/latest` | Return the most recent reading with its risk level | Working (T07, T10) |
+| GET | `/readings/history` | Return the readings of the last 7 days for the graphs | Working (T17) |
 | GET | `/verify` | Check the hash chain and report "OK" or "Tampered" | Working (T12) |
 | POST | `/report` | Create the AI explanation and the landlord letter | Working (T10, T13) |
+| GET | `/forecast` | Condensation warning for the next 48 hours, from the Open-Meteo forecast | Working (T17) |
 | POST | `/photos` | Add a photo of the damp; AI describes it (server only) | Working (T18) |
 | GET | `/photos` | List the photos with their AI description (server only) | Working (T18) |
 | GET | `/photos/{id}/image` | Return a photo, after checking it was not changed (server only) | Working (T18) |
 
-On the EC2 server the same endpoints are under `/api` (for example `/api/verify`), and from outside only GET requests are allowed.
+On the EC2 server the same endpoints are under `/api` (for example `/api/verify`). From outside, only GET requests are allowed, plus `POST /api/photos` and `POST /api/report`, which both have daily limits.
 
-The risk level (low, moderate, high) will be added to `POST /readings` in T10.
+There is no PUT, PATCH or DELETE for readings, on purpose: readings are evidence, so they are only ever added.
 
 ## Team
 
@@ -126,16 +143,19 @@ The risk level (low, moderate, high) will be added to `POST /readings` in T10.
 ## Security
 
 - Keys, passwords and device certificates are never committed. They stay in `.env` or in ignored files (see `.gitignore`).
-- Each team member has their own IAM user on AWS with MFA. The root account is not used for daily work.
+- Each team member has their own IAM user on AWS. The root account has MFA and is not used for daily work.
 - A budget alert is set on the AWS account.
 - The dashboard is only reachable over HTTPS, through CloudFront. The EC2 server accepts HTTP only from CloudFront, and SSH only from the Scrum Master.
-- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain. The one exception is adding a photo (T18), with a limit of 20 photos in any 24 hours.
+- From outside, data can only be read. Only the subscriber on the server can save readings, so nobody can add fake readings to the hash chain. The two exceptions are adding a photo (T18), with a limit of 20 photos in any 24 hours, and asking for the report (T13), with a limit of 50 AI calls in any 24 hours (after that it uses a fixed text). Neither of them saves a reading.
 - Photos are saved in a private S3 bucket as a clean JPEG, without their hidden data. The location from the photo is kept only in the database on the server and is never sent back by the API (a test checks this).
-- The EC2 server has no AWS keys. It uses an IAM role that can only put and read photos in our bucket and call one Bedrock model.
+- The EC2 server has no AWS keys. It uses an IAM role that can only put and read photos in our bucket and call Amazon Bedrock.
+- The full security check of the live system (T21) is in `docs/security/T21_security_check.md`.
 
 ## Limitations
 
+- The readings are tamper-evident, not tamper-proof: someone with full access to the database could recalculate every hash. Keeping a copy of the hashes outside the server is future work.
 - Letters created by MouldShield are drafts, not legal advice.
+- The condensation forecast assumes the room stays at the last reading, and it uses the weather for London only.
 - AI describes photos of damp and mould. It does not diagnose anything.
 - The date and phone model in a photo come from its EXIF data, which anyone can edit. The stronger evidence is the SHA-256 of the uploaded file and the upload time from our server.
 - When a photo is chosen in a browser on an iPhone, iOS often removes the EXIF data (always the location, by default). We saw this in our own test on 27 October, so for iPhone uploads the date and phone are usually missing.

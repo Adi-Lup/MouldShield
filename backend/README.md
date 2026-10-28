@@ -13,6 +13,8 @@ The API saves the readings in a SQLite file (`mouldshield.db`). On our own compu
 - `risk.py`: the risk level of a reading, LOW, MODERATE or HIGH (T10)
 - `report.py` and `report_text.py`: `POST /report`, the explanation and the letter to the landlord (T13)
 - `forecast.py` and `condensation.py`: `GET /forecast`, the condensation warning for the next 48 hours (T17)
+- `photos.py`: `POST /photos` and `GET /photos`, the photo evidence with an AI description (T18, Adrian)
+- `server.py`: how the back-end runs on the EC2 server: the API under `/api`, the dashboard from the same address, read only from outside, and the link preview (T16, Adrian)
 
 ## Database (T06)
 
@@ -209,4 +211,4 @@ From the `backend` folder:
 python -m unittest discover tests
 ```
 
-`test_risk.py`, `test_report.py`, `test_condensation.py` and `test_forecast.py` use a temporary database, a fake Bedrock and a fake Open-Meteo, so they never touch the real data, AWS or the internet.
+`test_risk.py`, `test_report.py`, `test_condensation.py` and `test_forecast.py` use a temporary database, a fake Bedrock and a fake Open-Meteo, so they never touch the real data, AWS or the internet. `test_photos.py` uses a fake S3 and a fake Bedrock, and `test_link_preview.py` checks the link preview tags and image. On 28 October 2026 all 56 tests pass.
