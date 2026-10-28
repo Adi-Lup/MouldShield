@@ -23,7 +23,7 @@ class LinkPreviewTests(unittest.TestCase):
 
     def test_page_has_the_preview_tags(self):
         html = self.client.get("/").text
-        self.assertIn('<meta property="og:image" content="https://d15ad8kcnyn7ke.cloudfront.net/og-image.png">', html)
+        self.assertIn('<meta property="og:image" content="https://d15ad8kcnyn7ke.cloudfront.net/og-image.png?v=2">', html)
         self.assertIn('<meta property="og:title"', html)
         self.assertIn('<meta name="twitter:card" content="summary_large_image">', html)
         # the tags are in the head, not in the body

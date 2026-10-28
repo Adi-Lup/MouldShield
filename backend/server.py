@@ -21,6 +21,7 @@ DASHBOARD = Path(__file__).resolve().parent.parent / "dashboard"
 # Link preview: what Teams, WhatsApp or LinkedIn show when someone shares our link.
 # The tags are added to the page here, like photos.js, so the dashboard's index.html is not changed.
 # The image must be a full https address, and PNG, because link previews do not show SVG.
+# Change the ?v= number when the picture changes, because Teams and WhatsApp keep old pictures for days.
 SITE = "https://d15ad8kcnyn7ke.cloudfront.net"
 PREVIEW_IMAGE = Path(__file__).resolve().parent.parent / "assets" / "og-image.png"
 PREVIEW_TITLE = "MouldShield · Your home, in view"
@@ -31,7 +32,7 @@ PREVIEW_TAGS = (
     f'<meta property="og:url" content="{SITE}/">'
     f'<meta property="og:title" content="{PREVIEW_TITLE}">'
     f'<meta property="og:description" content="{PREVIEW_TEXT}">'
-    f'<meta property="og:image" content="{SITE}/og-image.png">'
+    f'<meta property="og:image" content="{SITE}/og-image.png?v=2">'
     f'<meta property="og:image:width" content="1200">'
     f'<meta property="og:image:height" content="630">'
     f'<meta property="og:image:alt" content="MouldShield logo, by THE SHARKS">'
