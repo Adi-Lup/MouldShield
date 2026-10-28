@@ -29,7 +29,7 @@ CPU4106 Group Project, Fly-Tech internship scenario. Team **THE SHARKS**.
   <img src="assets/architecture.svg" alt="MouldShield architecture: the device sends readings over MQTT and TLS to AWS IoT Core; a subscriber script on an EC2 server passes them to the FastAPI back-end and SQLite database; Amazon Bedrock, Amazon S3 and Open-Meteo support the back-end; the web dashboard and the PDF report show the results" width="900">
 </p>
 
-Green arrows work now (27 October 2026). The device sends real readings to AWS IoT Core, the subscriber on our EC2 server saves them in SQLite through FastAPI, and the dashboard shows the latest reading with the "Data verified" badge. Dashed arrows are still planned. The dashboard is served over HTTPS through CloudFront (see `deploy/README.md`).
+All arrows work on the live system (28 October 2026). The device sends real readings to AWS IoT Core and the subscriber on our EC2 server saves them in SQLite through FastAPI. The back-end uses Amazon Bedrock for the explanation, the landlord letter and the photo descriptions, keeps photos in a private S3 bucket and gets the weather from Open-Meteo for the condensation forecast. The dashboard and the PDF report are served over HTTPS through CloudFront (see `deploy/README.md`). The data simulator is only a backup if the device fails.
 
 ## Repository structure
 
