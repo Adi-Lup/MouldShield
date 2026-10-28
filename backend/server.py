@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from main import app as api
@@ -17,6 +17,26 @@ from photos import router as photos_router
 api.include_router(photos_router)
 
 DASHBOARD = Path(__file__).resolve().parent.parent / "dashboard"
+
+# Link preview: what Teams, WhatsApp or LinkedIn show when someone shares our link.
+# The tags are added to the page here, like photos.js, so the dashboard's index.html is not changed.
+# The image must be a full https address, and PNG, because link previews do not show SVG.
+SITE = "https://d15ad8kcnyn7ke.cloudfront.net"
+PREVIEW_IMAGE = Path(__file__).resolve().parent.parent / "assets" / "og-image.png"
+PREVIEW_TITLE = "MouldShield · Your home, in view"
+PREVIEW_TEXT = ("Live damp and mould readings from a low-cost sensor, with tamper-evident "
+                "evidence for tenants. A student project by THE SHARKS.")
+PREVIEW_TAGS = (
+    f'<meta property="og:type" content="website">'
+    f'<meta property="og:url" content="{SITE}/">'
+    f'<meta property="og:title" content="{PREVIEW_TITLE}">'
+    f'<meta property="og:description" content="{PREVIEW_TEXT}">'
+    f'<meta property="og:image" content="{SITE}/og-image.png">'
+    f'<meta property="og:image:width" content="1200">'
+    f'<meta property="og:image:height" content="630">'
+    f'<meta property="og:image:alt" content="MouldShield logo, by THE SHARKS">'
+    f'<meta name="twitter:card" content="summary_large_image">'
+)
 
 # Requests from these addresses come from inside the server (the subscriber)
 INSIDE = {"127.0.0.1", "::1"}
@@ -63,7 +83,17 @@ def dashboard_page():
     # on the report page (T18). The dashboard files themselves are not changed.
     html = (DASHBOARD / "index.html").read_text(encoding="utf-8")
     html = html.replace("</body>", '<script src="photos.js"></script></body>', 1)
+    # The old description says "sample data", but this page shows the live readings
+    html = re.sub(r'<meta name="description" content="[^"]*">',
+                  f'<meta name="description" content="{PREVIEW_TEXT}">', html, count=1)
+    html = html.replace("</head>", PREVIEW_TAGS + "</head>", 1)
     return HTMLResponse(html)
+
+
+@app.api_route("/og-image.png", methods=["GET", "HEAD"], include_in_schema=False)
+def preview_image():
+    # The picture shown in link previews: our logo on a white background, 1200 x 630
+    return FileResponse(PREVIEW_IMAGE, media_type="image/png")
 
 
 # The API from main.py, under /api (the dashboard already calls /api/...)
