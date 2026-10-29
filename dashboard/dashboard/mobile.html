@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta name="mouldshield-build" content="20261029-t20-t22-fixes"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#234732"><meta name="description" content="MouldShield mobile sensor readings: large temperature, humidity and clear risk status."><title>MouldShield · Phone readings</title><link rel="stylesheet" href="phone.css?v=20261029-t20-t22-fixes"></head>
+<body><a class="skip" href="#readings" data-t="skip">Skip to readings</a>
+<div class="phone-shell"><header class="phone-header"><a href="index.html" aria-label="MouldShield dashboard"><img src="assets/logo-by-the-sharks.svg" alt="MouldShield by THE SHARKS" width="230" height="70"></a><label class="language"><span class="sr-only" data-t="language">Language</span><select id="phone-language"><option value="en">EN</option><option value="ro">RO</option></select></label></header>
+<main id="readings"><div class="sensor-heading"><h1 id="room-name">Sensor readings</h1><span id="device-name" class="muted"></span></div>
+<section id="phone-risk" class="phone-risk" data-level="unknown" aria-labelledby="risk-name"><span id="risk-icon" aria-hidden="true">?</span><h2 id="risk-name">Waiting for readings</h2></section>
+<div id="phone-announcement" class="sr-only" role="status" aria-live="polite"></div>
+<section class="reading" aria-labelledby="temp-label"><h2 id="temp-label" data-t="temperature">Temperature</h2><p><span id="phone-temperature">—</span><span class="unit">°C</span></p></section>
+<section class="reading" aria-labelledby="hum-label"><h2 id="hum-label" data-t="humidity">Relative humidity</h2><p><span id="phone-humidity">—</span><span class="unit">%</span></p></section>
+<div class="phone-details"><p id="phone-updated">Waiting for the sensor</p><p id="phone-integrity" class="integrity" data-state="neutral">Not checked</p><p id="phone-notice" class="source-note">Connecting to the sensor…</p><p id="phone-error" class="error" role="status" hidden></p></div>
+<div class="phone-actions"><button id="phone-refresh" type="button" data-t="refresh">Refresh now</button><button id="phone-mode" class="secondary" type="button" hidden disabled>Use sample data</button></div>
+<p class="phone-footnote" data-t="footnote">Updates every 15 seconds. One reading does not confirm mould.</p>
+<a class="dashboard-link" href="index.html" id="main-dashboard-link" data-t="dashboard">Open main dashboard</a></main>
+<footer class="phone-footer">THE SHARKS <span>·</span> MouldShield</footer></div>
+<noscript><p class="noscript">Enable JavaScript to see sensor readings.</p></noscript>
+<script src="config.js?v=20261029-t20-t22-fixes"></script><script src="core.js?v=20261029-t20-t22-fixes"></script><script src="phone-core.js?v=20261029-t20-t22-fixes"></script><script src="mobile.js?v=20261029-t20-t22-fixes"></script></body></html>
