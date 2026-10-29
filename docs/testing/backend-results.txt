@@ -1,0 +1,79 @@
+MouldShield back-end tests, run on 29 October 2026
+Command (from the backend folder): python -m unittest discover tests -v
+Code: main branch at commit aaea67a, plus the new tests/test_tamper_detection.py
+The tests use a temporary database and fake AWS and weather services, so they never touch the real data or call Bedrock, S3 or Open-Meteo.
+
+test_high_tonight (test_condensation.AssessTest.test_high_tonight) ... ok
+test_later_when_tonight_is_mild (test_condensation.AssessTest.test_later_when_tonight_is_mild) ... ok
+test_low (test_condensation.AssessTest.test_low) ... ok
+test_no_forecast (test_condensation.AssessTest.test_no_forecast) ... ok
+test_some_risk_tonight (test_condensation.AssessTest.test_some_risk_tonight) ... ok
+test_known_values (test_condensation.DewPointTest.test_known_values) ... ok
+test_surface (test_condensation.DewPointTest.test_surface) ... ok
+test_early_morning_ends_at_nine_today (test_condensation.TonightTest.test_early_morning_ends_at_nine_today) ... ok
+test_tonight_ends_at_nine_tomorrow (test_condensation.TonightTest.test_tonight_ends_at_nine_tomorrow) ... ok
+test_tonight_minimum (test_condensation.TonightTest.test_tonight_minimum) ... ok
+test_answer_in_the_dashboard_format (test_forecast.ForecastTest.test_answer_in_the_dashboard_format) ... ok
+test_location_is_not_sent_back (test_forecast.ForecastTest.test_location_is_not_sent_back) ... ok
+test_no_reading (test_forecast.ForecastTest.test_no_reading) ... ok
+test_no_weather (test_forecast.ForecastTest.test_no_weather) ... ok
+test_open_meteo_is_asked_once_in_30_minutes (test_forecast.ForecastTest.test_open_meteo_is_asked_once_in_30_minutes) ... ok
+test_uses_the_last_reading (test_forecast.ForecastTest.test_uses_the_last_reading) ... ok
+test_answer_is_kept_for_one_minute (test_forecast.HistoryTest.test_answer_is_kept_for_one_minute) ... ok
+test_empty (test_forecast.HistoryTest.test_empty) ... ok
+test_last_seven_days_of_one_device_oldest_first (test_forecast.HistoryTest.test_last_seven_days_of_one_device_oldest_first) ... ok
+test_description_no_longer_says_sample_data (test_link_preview.LinkPreviewTests.test_description_no_longer_says_sample_data) ... ok
+test_image_can_be_read_from_outside_but_not_changed (test_link_preview.LinkPreviewTests.test_image_can_be_read_from_outside_but_not_changed) ... ok
+test_page_has_the_preview_tags (test_link_preview.LinkPreviewTests.test_page_has_the_preview_tags) ... ok
+test_preview_image_is_a_1200_by_630_png (test_link_preview.LinkPreviewTests.test_preview_image_is_a_1200_by_630_png) ... ok
+test_answer_that_is_not_json_is_still_saved (test_photos.PhotoTests.test_answer_that_is_not_json_is_still_saved) ... ok
+test_attempts_older_than_24_hours_do_not_count (test_photos.PhotoTests.test_attempts_older_than_24_hours_do_not_count) ... ok
+test_dashboard_page_gets_photos_script (test_photos.PhotoTests.test_dashboard_page_gets_photos_script) ... ok
+test_gps_is_saved_privately_but_never_sent_back (test_photos.PhotoTests.test_gps_is_saved_privately_but_never_sent_back) ... ok
+test_heic_from_iphone_is_accepted_and_stored_as_clean_jpeg (test_photos.PhotoTests.test_heic_from_iphone_is_accepted_and_stored_as_clean_jpeg) ... ok
+test_image_route_checks_the_photo_was_not_changed (test_photos.PhotoTests.test_image_route_checks_the_photo_was_not_changed) ... ok
+test_limit_of_20_in_24_hours (test_photos.PhotoTests.test_limit_of_20_in_24_hours) ... ok
+test_no_damp_asks_the_tenant_and_saves_nothing_yet (test_photos.PhotoTests.test_no_damp_asks_the_tenant_and_saves_nothing_yet) ... ok
+test_not_a_photo_is_refused (test_photos.PhotoTests.test_not_a_photo_is_refused) ... ok
+test_old_photo_shows_days_before_upload (test_photos.PhotoTests.test_old_photo_shows_days_before_upload) ... ok
+test_outside_can_still_not_add_readings (test_photos.PhotoTests.test_outside_can_still_not_add_readings) ... ok
+test_phone_photo_is_turned_the_right_way_up (test_photos.PhotoTests.test_phone_photo_is_turned_the_right_way_up) ... ok
+test_photos_the_tenant_did_not_keep_count_for_the_limit (test_photos.PhotoTests.test_photos_the_tenant_did_not_keep_count_for_the_limit) ... ok
+test_png_and_webp_work_and_photo_without_exif_is_fine (test_photos.PhotoTests.test_png_and_webp_work_and_photo_without_exif_is_fine) ... ok
+test_too_big_is_refused_before_reading (test_photos.PhotoTests.test_too_big_is_refused_before_reading) ... ok
+test_too_big_without_content_length_is_stopped_while_reading (test_photos.PhotoTests.test_too_big_without_content_length_is_stopped_while_reading) ... ok
+test_yes_add_it_saves_without_asking_ai_again (test_photos.PhotoTests.test_yes_add_it_saves_without_asking_ai_again) ... ok
+test_bad_answers_are_refused (test_report.CleanAnswerTest.test_bad_answers_are_refused) ... ok
+test_markdown_and_long_dashes_are_removed (test_report.CleanAnswerTest.test_markdown_and_long_dashes_are_removed) ... ok
+test_plain_text_is_kept (test_report.CleanAnswerTest.test_plain_text_is_kept) ... ok
+test_ai_explanation_is_saved_and_not_paid_twice (test_report.ReportTest.test_ai_explanation_is_saved_and_not_paid_twice) ... ok
+test_daily_limit_on_bedrock (test_report.ReportTest.test_daily_limit_on_bedrock) ... ok
+test_errors (test_report.ReportTest.test_errors) ... ok
+test_fixed_text_when_bedrock_fails (test_report.ReportTest.test_fixed_text_when_bedrock_fails) ... ok
+test_fixed_text_when_the_answer_is_not_plain (test_report.ReportTest.test_fixed_text_when_the_answer_is_not_plain) ... ok
+test_letter_has_the_numbers_from_the_database (test_report.ReportTest.test_letter_has_the_numbers_from_the_database) ... ok
+test_numbers_in_the_request_are_not_used (test_report.ReportTest.test_numbers_in_the_request_are_not_used) ... ok
+test_short_history_says_since (test_report.ReportTest.test_short_history_says_since) ... ok
+test_tampered_data_is_not_called_unchanged (test_report.ReportTest.test_tampered_data_is_not_called_unchanged) ... ok
+test_exact_value_not_rounded (test_risk.RiskLevelTest.test_exact_value_not_rounded) ... ok
+test_high (test_risk.RiskLevelTest.test_high) ... ok
+test_low (test_risk.RiskLevelTest.test_low) ... ok
+test_moderate (test_risk.RiskLevelTest.test_moderate) ... ok
+test_device_id_changed (test_tamper_detection.TamperDetectionTest.test_device_id_changed) ... ok
+test_humidity_changed_in_first_reading (test_tamper_detection.TamperDetectionTest.test_humidity_changed_in_first_reading) ... ok
+test_humidity_changed_in_last_reading (test_tamper_detection.TamperDetectionTest.test_humidity_changed_in_last_reading) ... ok
+test_humidity_changed_in_middle_reading (test_tamper_detection.TamperDetectionTest.test_humidity_changed_in_middle_reading) ... ok
+test_limit_deleting_the_newest_reading_is_not_detected (test_tamper_detection.TamperDetectionTest.test_limit_deleting_the_newest_reading_is_not_detected) ... ok
+test_limit_recalculating_every_hash_is_not_detected (test_tamper_detection.TamperDetectionTest.test_limit_recalculating_every_hash_is_not_detected) ... ok
+test_middle_reading_deleted (test_tamper_detection.TamperDetectionTest.test_middle_reading_deleted) ... ok
+test_reading_replaced_by_fake_one (test_tamper_detection.TamperDetectionTest.test_reading_replaced_by_fake_one) ... ok
+test_temperature_changed (test_tamper_detection.TamperDetectionTest.test_temperature_changed) ... ok
+test_timestamp_changed (test_tamper_detection.TamperDetectionTest.test_timestamp_changed) ... ok
+test_untouched_chain_is_ok (test_tamper_detection.TamperDetectionTest.test_untouched_chain_is_ok) ... ok
+test_value_and_own_hash_changed (test_tamper_detection.TamperDetectionTest.test_value_and_own_hash_changed) ... ok
+test_value_put_back_is_ok_again (test_tamper_detection.TamperDetectionTest.test_value_put_back_is_ok_again) ... ok
+
+----------------------------------------------------------------------
+Ran 69 tests in 4.934s
+
+OK

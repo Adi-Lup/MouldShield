@@ -211,4 +211,4 @@ From the `backend` folder:
 python -m unittest discover tests
 ```
 
-`test_risk.py`, `test_report.py`, `test_condensation.py` and `test_forecast.py` use a temporary database, a fake Bedrock and a fake Open-Meteo, so they never touch the real data, AWS or the internet. `test_photos.py` uses a fake S3 and a fake Bedrock, and `test_link_preview.py` checks the link preview tags and image. On 28 October 2026 all 56 tests pass.
+`test_risk.py`, `test_report.py`, `test_condensation.py` and `test_forecast.py` use a temporary database, a fake Bedrock and a fake Open-Meteo, so they never touch the real data, AWS or the internet. `test_photos.py` uses a fake S3 and a fake Bedrock, `test_link_preview.py` checks the link preview tags and image, and `test_tamper_detection.py` changes a temporary database by hand in 13 different ways and checks what `GET /verify` finds. On 29 October 2026 all 69 tests pass (results in `docs/testing/backend-results.txt`).

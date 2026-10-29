@@ -102,7 +102,9 @@ node --test tests/*.test.js
 python -m unittest discover tests
 ```
 
-On 29 October 2026: 56 back-end tests, 53 dashboard JavaScript tests and 19 dashboard Python tests, all passing. The back-end tests use fake AWS and weather services, so they never call Bedrock, S3 or Open-Meteo.
+On 29 October 2026: 69 back-end tests, 53 dashboard JavaScript tests and 19 dashboard Python tests, all passing. The back-end tests use fake AWS and weather services, so they never call Bedrock, S3 or Open-Meteo.
+
+The results are in `docs/testing/`. `system_tests.md` has the tests with the real device (speed, connection drops, tamper check on real readings), and `requirements_traceability.md` links every user story to the tests that show it works.
 
 ## Endpoints
 
