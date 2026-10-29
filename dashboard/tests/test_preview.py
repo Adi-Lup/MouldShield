@@ -221,7 +221,7 @@ class PreviewTests(unittest.TestCase):
         # Permit that expected image while keeping the rest of the app self-contained.
         self.assertEqual(page.count('data:image/png;base64,'), 1)
         self.assertRegex(page, r"window\.MouldShieldPdfLogo=['\"]data:image/png;base64,")
-        self.assertIn('Check that your sensor and internet connection are working, then refresh the dashboard.', page)
+        self.assertIn('Make sure the sensor is switched on and connected to Wi-Fi, then refresh the page.', page)
         self.assertNotIn('Keep the sensor and the project API running, then refresh the dashboard.', page)
         self.assertNotIn('T15_data_flow.png', page)
         self.assertNotIn('data-view="diagrams"', page)

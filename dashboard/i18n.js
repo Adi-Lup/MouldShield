@@ -47,7 +47,7 @@ const ro={
 'Waiting for your sensor.':'Se așteaptă senzorul.',
 'No valid current reading is available. A green risk status is not assumed.':'Nu există o citire actuală validă. Nu se presupune automat un risc redus.',
 'Check your connection':'Verifică conexiunea',
-'Check that your sensor and internet connection are working, then refresh the dashboard.':'Verifică dacă senzorul și conexiunea la internet funcționează, apoi reîncarcă panoul.',
+'Make sure the sensor is switched on and connected to Wi-Fi, then refresh the page.':'Verifică dacă senzorul este pornit și conectat la Wi-Fi, apoi reîncarcă pagina.',
 'The reading is out of date.':'Citirea nu mai este actuală.',
 'The last reading is older than two minutes. Check the device connection.':'Ultima citire este mai veche de două minute. Verifică legătura cu dispozitivul.',
 'TEMPERATURE':'TEMPERATURĂ','Temperature':'Temperatură','Latest room temperature':'Ultima temperatură din cameră','Sample sensor reading':'Citire demonstrativă','Original API reading':'Citire originală din API',
