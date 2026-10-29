@@ -51,9 +51,9 @@ Not sure where something goes? Use this table. Every file name starts with the t
 | Back-end code (FastAPI, database, scripts) | `backend/` | `backend/hash_chain.py` |
 | Dashboard and mobile page (HTML, CSS, JavaScript) | `dashboard/` | `dashboard/index.html` |
 | Use Case diagrams and DFDs (T15) | `dashboard/diagrams/` | `dashboard/diagrams/T15_use_case.png` |
-| Wireframes, persona and other design files | `docs/design/` | `docs/design/T05_persona.png` |
+| Wireframes, persona and other design files | `docs/design/` | `docs/design/4.png` |
 | Research notes with sources | `docs/research/` | `docs/research/T04_humidity_thresholds.md` |
-| Test plan and test results (T22) | `docs/testing/` | `docs/testing/T22_test_results.md` |
+| Test plan and test results (T22) | `docs/testing/` | `docs/testing/T22_results.md` |
 | Stand-up notes, sprint reviews | `docs/standups/` | `docs/standups/2026-10-22.md` |
 | Backlog and risk register | `docs/agile/` | Kept by the Scrum Master |
 | Logo and images used by the README | `assets/` | `assets/logo.svg` |
@@ -102,7 +102,7 @@ node --test tests/*.test.js
 python -m unittest discover tests
 ```
 
-On 28 October 2026: 56 back-end tests, 23 dashboard JavaScript tests and 8 dashboard Python tests, all passing. The back-end tests use fake AWS and weather services, so they never call Bedrock, S3 or Open-Meteo.
+On 29 October 2026: 56 back-end tests, 53 dashboard JavaScript tests and 19 dashboard Python tests, all passing. The back-end tests use fake AWS and weather services, so they never call Bedrock, S3 or Open-Meteo.
 
 ## Endpoints
 

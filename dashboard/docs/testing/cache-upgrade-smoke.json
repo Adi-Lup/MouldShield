@@ -1,9 +1,0 @@
-{
-  "environment": "jsdom DOM integration checks with local API fixtures; not a physical browser or phone test",
-  "results": [
-    "Main dashboard: full startup, live/demo/live, EN/RO, seven-day graph and report navigation passed.",
-    "Mobile page: actual source assets loaded and fixture live readings displayed.",
-    "Offline START_HERE.html: sample banner visible, no API requests, no script errors.",
-    "Cached older bare app.js was bypassed by the release-versioned script URL."
-  ]
-}
