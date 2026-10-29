@@ -9,7 +9,8 @@
 | Check | Result | Evidence |
 |---|---|---|
 | JavaScript automated tests | PASS - 53 tests | `javascript-results.txt` |
-| Python automated tests | PASS - 19 tests | `python-results.txt` |
+| Python reference tests | PASS - 19 tests | `python-results.txt` |
+| Back-end automated tests | PASS - 69 tests | `backend-results.txt` |
 | Dashboard startup and data-source switching | PASS | `full-app-smoke.json` |
 | Live API readings, verification and forecast | PASS - endpoints returned HTTP 200 | `live-get-checks.json` |
 | Risk calculation and altered hash-chain detection | PASS | Reference fixtures and Python tests |
@@ -18,13 +19,21 @@
 | Selected photo in PDF | PASS | `pdf-report.test.js` |
 | Chrome report controls | PASS | `chrome-checks.json` |
 | Lighthouse: dashboard, mobile, report and QR page | PASS - 100/100 each on the previous visual build; this correction changes copy and test coverage only | `lighthouse/` reports |
-| Windows PDF save and open | PASS - manual check reported complete | Manual result confirmed by user |
-| iPhone/Safari and Android/Chrome QR and PDF | PASS - manual checks reported complete | Manual result confirmed by user |
-| Keyboard, 200% zoom, screen reader and PDF reading order | PASS - manual checks reported complete | Manual result confirmed by user |
-| Physical sensor, display/beeps, Wi-Fi/MQTT and API/database reading | PASS - manual check reported complete | Manual result confirmed by user |
-| Selected real T18 photo in report | PASS - manual check reported complete | Manual result confirmed by user |
+| Windows PDF save and open | PASS - manual check complete | Checked by Claudiu on 29 Oct |
+| iPhone/Safari and Android/Chrome QR and PDF | PASS - manual checks complete | Checked by Claudiu on 29 Oct |
+| Keyboard, 200% zoom, screen reader and PDF reading order | PASS - manual checks complete | Checked by Claudiu on 29 Oct |
+| Physical sensor, display/beeps, Wi-Fi/MQTT and API/database reading | PASS - manual check complete | Checked by Claudiu on 29 Oct |
+| Selected real T18 photo in report | PASS - manual check complete | Checked by Claudiu on 29 Oct |
 
-**72 automated tests passed (53 JavaScript and 19 Python).** The Lighthouse scores are automated checks; manual accessibility checks are also recorded above. Manual results reflect the user's confirmation. The checklist does not include device details or screenshots, so attach those separately if the course requires evidence.
+**141 automated tests passed (53 JavaScript, 19 Python reference and 69 back-end).** The Lighthouse scores are automated checks; manual accessibility checks are also recorded above. The manual checks were done by Claudiu on 29 October 2026 and are listed in `T22_manual_checklist.csv`. The checklist does not include device details or screenshots, so attach those separately if the course requires evidence.
+
+## Related test files
+
+- [`system_tests.md`](system_tests.md) - tests with the real device (Adrian)
+- [`requirements_traceability.md`](requirements_traceability.md) - user stories US1 to US7 and the tests for each one (Adrian)
+- [`backend-results.txt`](backend-results.txt) - all 69 back-end tests (Adrian)
+- [`../../backend/tests/test_tamper_detection.py`](../../backend/tests/test_tamper_detection.py) - 13 hash-chain tamper tests (Adrian)
+- [`T22_test_plan.md`](T22_test_plan.md) and [`T22_manual_checklist.csv`](T22_manual_checklist.csv) - test plan and manual checks
 
 ## Fixes retested
 
