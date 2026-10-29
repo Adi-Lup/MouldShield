@@ -4,6 +4,22 @@
 let locale='en';
 const textRecords=new WeakMap(),attributeRecords=new WeakMap();
 const ro={
+'Review the letter, then download the PDF or print the report. Nothing is sent automatically.':'Verifică scrisoarea, apoi descarcă PDF-ul sau tipărește raportul. Nu se trimite nimic automat.',
+'Save PDF':'Salvează PDF',
+'Your PDF is ready. If saving did not start, choose Save PDF.':'PDF-ul este gata. Dacă salvarea nu a pornit, apasă Salvează PDF.',
+'Download PDF':'Descarcă PDF',
+'Preparing your PDF…':'Se pregătește PDF-ul…',
+'PDF downloaded. Review it before sharing.':'PDF descărcat. Verifică-l înainte de a-l trimite.',
+'Explore your sensor history.':'Explorează istoricul citirilor de la senzor.',
+'Review the sensor summary.':'Verifică rezumatul citirilor de la senzor.',
+'Open QR code':'Deschide codul QR',
+'Sample data — these are example readings, not real sensor data.':'Date demonstrative — acestea sunt exemple, nu citiri reale de la senzor.',
+'Live readings from your sensor':'Citiri în timp real de la senzorul tău',
+'See example data':'Vezi date de exemplu',
+'Connect to live readings':'Conectează citirile reale',
+'Waiting for your sensor':'Se așteaptă date de la senzor',
+'Sensor reading is out of date':'Citirea senzorului nu mai este actuală',
+'Waiting for a reading':'Se așteaptă o citire',
 'MouldShield · Your home, in view':'MouldShield · Locuința ta, la vedere',
 'MouldShield - standalone preview':'MouldShield - previzualizare independentă',
 'Dashboard language':'Limba interfeței',
@@ -31,7 +47,7 @@ const ro={
 'Waiting for your sensor.':'Se așteaptă senzorul.',
 'No valid current reading is available. A green risk status is not assumed.':'Nu există o citire actuală validă. Nu se presupune automat un risc redus.',
 'Check your connection':'Verifică conexiunea',
-'Make sure the sensor is switched on and connected to Wi-Fi, then refresh the page.':'Verifică dacă senzorul este pornit și conectat la Wi-Fi, apoi reîncarcă pagina.',
+'Keep the sensor and the project API running, then refresh the dashboard.':'Menține senzorul și API-ul pornite, apoi actualizează panoul.',
 'The reading is out of date.':'Citirea nu mai este actuală.',
 'The last reading is older than two minutes. Check the device connection.':'Ultima citire este mai veche de două minute. Verifică legătura cu dispozitivul.',
 'TEMPERATURE':'TEMPERATURĂ','Temperature':'Temperatură','Latest room temperature':'Ultima temperatură din cameră','Sample sensor reading':'Citire demonstrativă','Original API reading':'Citire originală din API',
@@ -121,6 +137,7 @@ function translated(source){
   else if((match=value.match(/^Humidity over the last 24 hours; latest (.*?) percent\.$/)))result='Umiditatea în ultimele 24 de ore; ultima valoare '+match[1]+'%.';
   else if((match=value.match(/^(.*?), (-?[\d.]+ °C)$/))&&ro[match[1]])result=ro[match[1]]+', '+match[2];
   else if((match=value.match(/^(Illustrative forecast\.|Forecast for London\.) (?:Updated (.*?)\. )?Next (.*?) hours\. Weather data: Open-Meteo\.$/)))result=(match[1]==='Illustrative forecast.'?'Prognoză demonstrativă. ':'Prognoză pentru Londra. ')+(match[2]?'Actualizată la '+match[2]+'. ':'')+'Următoarele '+match[3]+' de ore. Sursa meteo: Open-Meteo.';
+  else if((match=value.match(/^(.*?) · recent readings$/)))result=match[1]+' · citiri recente';
   else if((match=value.match(/^Live API mode\. (.*)$/)))result='Mod API live. '+match[1].replace(/^Source: /,'Sursa: ').replace('Requests use the same origin.','Cererile folosesc aceeași origine.');
   else if((match=value.match(/^Requesting explanation in (.*?)…$/)))result='Se solicită explicația în '+match[1]+'…';
   else if((match=value.match(/^Sample explanation in (.*?)\. No API request was made in demo mode\.$/)))result='Explicație demonstrativă în '+match[1]+'. În modul demonstrativ nu a fost trimisă o cerere API.';

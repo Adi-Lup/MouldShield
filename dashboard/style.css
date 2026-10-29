@@ -17,3 +17,22 @@
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #ui-language{min-height:44px;min-width:86px;border:1px solid #385c39;border-radius:6px;background:#fff;color:#22372a;padding:8px 12px;font-size:17px;font-weight:700}
 .topbar{flex-wrap:wrap}.top-right{margin-left:auto}.breadcrumb{min-width:0;overflow-wrap:anywhere}
+
+/* Source controls: discreet in live mode; clear and prominent for example data. */
+.update{flex-wrap:wrap;justify-content:flex-end;row-gap:4px}
+.live-reading-label{font-size:14px;color:#35493c;border-left:1px solid #9aaea0;padding-left:10px;margin-left:4px}
+.mode-banner{background:#fff1c4;border-color:#8e7021;padding:20px 22px;gap:14px}
+.mode-banner>span{font-size:18px;font-weight:650;color:#4c3600;min-width:0;flex-basis:350px}
+.mode-banner>svg{color:#4c3600;width:24px;height:24px}
+.mode-banner .button{font-size:16px;min-height:44px}
+.example-data-link{border:0;background:transparent;color:#234732;text-decoration:underline;text-underline-offset:4px;padding:10px 12px;min-height:44px;font-size:14px;cursor:pointer}
+.example-data-link:hover{background:#e7eee5;border-radius:6px}
+.example-data-link:focus-visible{outline:3px solid #122e59;outline-offset:3px}
+@media(max-width:700px){.update{justify-content:flex-start}.live-reading-label{font-size:14px}.mode-banner{padding:18px}.mode-banner>span{flex-basis:calc(100% - 42px);font-size:18px}.mode-banner .button{margin-left:38px}footer .example-data-link{margin:6px 0;padding-left:0;text-align:left}}
+@media print{.example-data-link{display:none!important}}
+
+.qr-shortcut{font-size:14px;padding:7px 12px;min-height:44px;white-space:nowrap}.top-right{flex-wrap:wrap;justify-content:flex-end}@media(max-width:700px){.qr-shortcut{font-size:14px;padding:7px 10px}.topbar{gap:8px}.top-right{gap:8px}}
+
+.pdf-actions{display:flex;gap:12px;flex-wrap:wrap}.pdf-actions .button{min-height:48px}#pdf-status{font-size:16px;overflow-wrap:anywhere}#pdf-status:empty{display:none}@media print{.pdf-actions,#pdf-status{display:none!important}}@media(max-width:640px){.pdf-actions{width:100%}.pdf-actions .button{flex:1 1 180px}}
+
+@media print{#pdf-save-link{display:none!important}}

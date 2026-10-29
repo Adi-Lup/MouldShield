@@ -10,7 +10,7 @@ python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)" >nul 2
 if not errorlevel 1 goto use_python3
 echo.
 echo Python 3.8 or newer was not found. Opening the self-contained demo instead.
-echo Live API connections require Python and the project backend.
+echo Live sensor readings require Python and an internet connection.
 start "" "%~dp0START_HERE.html"
 echo.
 pause

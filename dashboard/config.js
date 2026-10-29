@@ -1,6 +1,6 @@
 // No passwords or API keys belong in this public front-end configuration.
 window.MOULDSHIELD_CONFIG = {
-  mode: 'demo', // Change to 'live' for the project API.
+  mode: 'live', // Real readings by default; use See example data for samples.
   apiBaseUrl: '/api', // Local VS Code preview uses '/api' through run.py.
   endpoints: {
     latest: '/readings/latest',
@@ -11,6 +11,7 @@ window.MOULDSHIELD_CONFIG = {
   },
   timeZone: 'Europe/London',
   refreshIntervalMs: 15000,
+  historyRefreshIntervalMs: 300000, // Download the 7-day history every 5 minutes.
   requestTimeoutMs: 8000,
   expectedReadingIntervalSeconds: 15,
   reportLanguageField: 'language'

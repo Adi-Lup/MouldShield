@@ -6,8 +6,10 @@
     function display() {
       const panel = document.getElementById('startup-error');
       if (panel) {
+        const loading = document.getElementById('startup-status');
+        if (loading) loading.hidden = true;
         panel.hidden = false;
-        panel.textContent = 'Dashboard could not start: ' + failure + ' Extract all files into one folder, or open START_HERE.html. Send this message if you need help.';
+        panel.textContent = 'Dashboard could not start: ' + failure + ' Close the older MouldShield server window, extract this release into a new folder, and run START_MOULDSHIELD.bat. Then reload the address printed by that server.';
       }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', display, { once: true });
