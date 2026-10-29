@@ -14,7 +14,7 @@ import ipaddress
 
 ROOT = Path(__file__).resolve().parent
 MAX_BODY = 1_000_000
-BUILD_ID = '20261028-t20-t22'
+BUILD_ID = '20261029-t20-t22-fixes'
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):

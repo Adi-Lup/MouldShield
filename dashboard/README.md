@@ -1,90 +1,124 @@
 # MouldShield dashboard
 
-**THE SHARKS · Claudiu Stratulat (T14)**
+**THE SHARKS · Claudiu Stratulat · T14 / T19**
 
-A tenant dashboard built with HTML, CSS and JavaScript. It shows temperature, humidity, the risk level and the data integrity result, with an English and Romanian interface.
+The updated tenant dashboard, mobile page and branded QR code, ready to edit in **Visual Studio Code**. Built with HTML, CSS and JavaScript, with a small Python server for the local preview.
 
-## Open in Visual Studio Code
+## Open and run
 
-Choose **File → Open Folder** and select the `dashboard` folder of the repository. Edit the source files and press **Ctrl+S** to save.
+**Release 20261029-t20-t22-fixes:** close any older MouldShield/Python server windows first. Open the repository’s `dashboard` folder in Visual Studio Code and run its launcher. Use the browser address printed by that window; an earlier server may still occupy port 8080.
 
-## Run the dashboard
+1. Open the `dashboard` folder in Visual Studio Code, or double-click `MouldShield.code-workspace`.
+2. Double-click **START_MOULDSHIELD.bat**. Keep its window open.
+3. The dashboard opens at the local address printed in that window, normally `http://127.0.0.1:8080/`.
 
-Install Python 3.8 or newer, then double-click **START_WINDOWS.bat**. Keep its window open and use the local address it prints, normally [**http://127.0.0.1:8080**](http://127.0.0.1:8080 "http://127.0.0.1:8080/"). Save your changes and refresh the browser. Press **Ctrl+C** in the server window to stop it.
+Python 3.8 or newer and an internet connection are needed for live readings. No pip or npm packages are needed to run the project. The launcher checks for Python automatically. If Python is missing, it opens the clearly labelled sample preview, `START_HERE.html`.
 
-You can also use the VS Code terminal:
+You can also run this in the VS Code terminal:
 
-```
+```text
 py -3 run.py
 ```
 
-On macOS or Linux, use `python3 run.py`. No pip or npm packages are needed to run the dashboard. If Python is missing, the Windows launcher opens the sample-only preview instead.
+On macOS or Linux: `python3 run.py`. Press **Ctrl+C** in the server window to stop it. Save edits with **Ctrl+S** and refresh the browser.
 
-**START_HERE.html is a generated demo.** To update it after editing the source files, run:
+The included VS Code configuration also supports **F5** to open Chrome. The F5 preview uses port 8080; close any existing preview first.
 
+## Live readings and example data
+
+The normal dashboard starts in **live mode**. The local server forwards `/api` requests to the existing team API at `https://d15ad8kcnyn7ke.cloudfront.net/api`. You do not need to start a second backend on your laptop for this configuration. Live readings still depend on the team's API and sensor being available.
+
+- Current readings and data verification refresh every **15 seconds**.
+- The seven-day history is downloaded every **5 minutes**. In-flight history requests are not duplicated. A failed history update keeps the previous history and shows a message.
+- “Live readings from your sensor” appears beside the reading time. Missing or old readings show a clear waiting or outdated message.
+- **See example data** appears discreetly at the bottom of the dashboard.
+- Example mode has a large banner that clearly says the data is not real. Use **Connect to live readings** to return to the API.
+- Humidity is rounded only on screen; original decimal values remain in the source data and CSV export.
+- Risk uses the original humidity value: low up to 60%, moderate above 60% up to 70%, high above 70%. These are project warning bands, not an official HHSRS assessment.
+
+To use a backend running locally instead:
+
+```text
+py -3 run.py --api-url http://127.0.0.1:8000
 ```
-py -3 scripts/build_standalone.py
+
+Never put passwords, certificates, keys or database files in this front end.
+
+## QR code and mobile page
+
+Click **Open QR code** at the top of the dashboard, or open **MouldShield_QR.html** directly. **MouldShield_QR.png** and **MouldShield_QR.svg** are included for printing and presentations.
+
+The QR contains exactly:
+
+```text
+https://d15ad8kcnyn7ke.cloudfront.net/
 ```
 
-## Project files
+It uses navy rounded dots, blue finder centres, the team logo in the middle, H error correction and a four-module quiet zone. The logo and its white background cover about 7.9% of the data square.
 
-| File or folder                  | Purpose                                               |
-| ------------------------------- | ----------------------------------------------------- |
-| `index.html`                    | Dashboard and report structure                        |
-| `style.css`                     | Layout, colours and responsive styling                |
-| `app.js`                        | Dashboard behaviour and API calls                     |
-| `core.js`                       | Reading, risk and integrity logic                     |
-| `config.js`                     | API endpoints and refresh settings                    |
-| `i18n.js`                       | English and Romanian interface text                   |
-| `assets/logo-by-the-sharks.svg` | Team logo                                             |
-| `diagrams/T15_use_case.png`     | Use case diagram (T15)                                |
-| `diagrams/T15_data_flow.png`    | Level 0 (context) data flow diagram (T15)             |
-| `docs/API_INTEGRATION.md`       | Confirmed API formats and integrations still to agree |
-| `tests/`                        | Automated JavaScript and Python tests                 |
-| `run.py` / `START_WINDOWS.bat`  | Local preview and API proxy                           |
+The QR opens the **published site**. It does not open your laptop or automatically publish your local edits. Your phone can use Wi-Fi or mobile data to reach the hosted site.
 
-The two diagrams are separate files and are not shown in the dashboard.
+The included **mobile.html** is also available locally at `http://127.0.0.1:8080/mobile.html`. It always uses live readings, updates every 15 seconds and never silently substitutes example values when the API fails. It includes EN / RO and a link back to the main dashboard. Publishing this page requires uploading it and its source assets to the team's hosting.
 
-## Features
+## Files
 
-- Temperature, and humidity as a whole percent. The exact value stays in the API data and the CSV export.
-- Risk shown with words and icons as well as colour: low up to 60% RH, moderate above 60% up to 70%, high above 70%. These are the same limits as on the device (T04). They are prototype warning levels, not an official HHSRS assessment.
-- **EN / RO** interface selector in the top-right corner, which remembers the choice.
-- Integrity badge from **GET /verify**: "Data verified", "Tampered", or a neutral state when there is no data or the API cannot be reached.
-- Report language: English, Română or Polski. The letter to the landlord is an editable draft and can be printed or saved as PDF from the browser. Nothing is sent automatically.
-- Forecast panel and a 24 h / 7 days graph, ready for the back-end endpoints.
+| File or folder | Purpose |
+|---|---|
+| `index.html`, `style.css`, `app.js` | Main dashboard and report page |
+| `core.js`, `config.js`, `i18n.js` | Data handling, settings and English/Romanian text |
+| `mobile.html`, `mobile.js`, `phone.css`, `phone-core.js` | Mobile page and editable source |
+| `MouldShield_QR.html`, `.png`, `.svg` | Branded QR code pointing to the hosted home page |
+| `assets/logo-by-the-sharks.svg` | Team logo |
+| `diagrams/T15_use_case.png` | Separate use case diagram |
+| `diagrams/T15_data_flow.png` | Separate level 0 context DFD |
+| `run.py`, `START_MOULDSHIELD.bat` | Local preview and API proxy |
+| `.vscode/`, `MouldShield.code-workspace` | VS Code run settings |
+| `tests/`, `../docs/testing/` | Automated checks and their results |
 
-Demo mode uses clearly labelled sample data. It does not read the real database and never shows sample data as verified.
+The diagrams are separate files and do not appear inside the dashboard. No level 1 diagram is included.
 
-## Connect to the back-end
+## Reports and forecast
 
-1. Start the FastAPI back-end at [**http://127.0.0.1:8000**](http://127.0.0.1:8000 "http://127.0.0.1:8000/"), following `backend/README.md`.
-2. Start this dashboard with **START_WINDOWS.bat** or `py -3 run.py`.
-3. Click **Connect to API** in the dashboard. The local server forwards `/api` requests to the back-end.
+**T20:** open My report, choose the explanation language, edit the letter and click Download PDF. If saving does not start automatically, use Save PDF. The existing print option remains. See `docs/T20_PDF_REPORT.md`.
 
-| Integration                | Status (23 October 2026)                                                         |
-| -------------------------- | -------------------------------------------------------------------------------- |
-| `GET /readings/latest`     | Working; the reading fields match the dashboard                                  |
-| `GET /verify`              | Working; the OK and Tampered responses match the dashboard                       |
-| `POST /report`             | Planned (T13); request and response format to agree with Sergiu                  |
-| Forecast and 7-day history | Not in the back-end yet (T17); set the routes in `config.js` when they are ready |
+**T22:** test plan, results, Lighthouse reports and manual checklist are in the repository-level `../docs/testing/` folder. Manual checks are recorded as PASS based on user confirmation; GitHub issue-linked commits and a teammate review remain for the team Definition of Done.
 
-The standalone demo cannot connect to the API. Reports, the forecast and the history only work once those back-end endpoints exist. Never put passwords, device certificates, keys or database files in the front-end or on GitHub.
+The report page has English, Romanian and Polish explanation language choices. The selected language is sent to `POST /report`. The editable landlord letter can be downloaded as PDF directly or printed from the browser. Nothing is sent to the landlord automatically.
 
-For a different back-end address, use `py -3 run.py --api-url `[`https://YOUR-API-HOST`](https://YOUR-API-HOST "https://your-api-host/") with the real host. Do not put credentials in the URL.
+The forecast and history use the team's `/forecast` and `/readings/history` endpoints. Forecast calculations come from the backend; the page displays them. The 7-day graph shows daily average humidity and the recorded time above 70%.
 
 ## Tests
 
-JavaScript tests (Node.js needed):
+With Node.js installed:
 
-```
-node --test tests/core.test.js tests/api.test.js tests/i18n.test.js
+```text
+node --test tests/core.test.js tests/api.test.js tests/i18n.test.js tests/t19-update.test.js tests/live-source-ui.test.js tests/release.test.js tests/pdf-report.test.js tests/pdf-flow.test.js
 ```
 
-Local preview and proxy tests:
+Python preview and proxy tests:
 
-```
+```text
 py -3 -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-There are 31 automated tests (23 JavaScript and 8 Python). The accessibility target is WCAG 2.2 AA. Manual checks (screen reader, zoom, Windows browsers) are still to do as part of T22.
+The package passed **53 JavaScript tests and 19 Python tests**. The real HTTPS API returned successful JSON responses for the latest reading and verification through the local proxy. QR decoding passed 12 size/rotation checks. The full pages were also exercised in Chrome with controlled test data: dashboard startup, EN/RO, 24 h / 7 days, live/demo/live, report source changes, mobile-to-dashboard navigation and the QR page. Cached-script upgrade regression checks passed. Native Windows execution, physical phone scans and final WCAG checks remain to be completed by the team.
+
+## Rebuild generated files
+
+After editing the dashboard source, regenerate its sample-only offline preview:
+
+```text
+py -3 scripts/build_standalone.py
+```
+
+To regenerate the QR HTML and SVG with the bundled encoder (Node.js required, no npm install):
+
+```text
+node scripts/build_qr.js
+```
+
+The PNG is a pre-rendered copy of the included QR design.
+
+This package contains the front end and local preview. It does not contain the team's backend, device firmware or credentials, and it does not change GitHub or CloudFront automatically.
+
+PDF export uses bundled jsPDF and DejaVu Sans. Licences are in `vendor/`. Manual PDF save/open checks are recorded as PASS in `../docs/testing/T22_results.md`. This package is ready for you to upload to GitHub; deployment to CloudFront is a separate step.

@@ -1,7 +1,7 @@
-# Release 20261028-t20-t22
+# Release 20261029-t20-t22-fixes
 
-- T20: direct PDF export with a Unicode explanation, editable letter, integrity result, exact reading precision, repeated example-data warnings, page numbers and a manual Save PDF link.
-- Matched the current backend POST /report contract (reading ID and language) and allowed enough request time for explanation generation.
-- T22: 72 automated checks, four Lighthouse reports, live GET smoke results and a clearly separated manual checklist.
-- The approved QR, diagrams, cache fixes, live/demo UI and five-minute history interval are preserved.
-- No GitHub or CloudFront changes were made.
+- Bundled jsPDF, qrcode.js and all third-party licence files under `vendor/`.
+- Updated the no-reading guidance in the dashboard, Romanian translation and standalone preview.
+- Updated the standalone test to allow the one embedded PNG used by the PDF header logo and verify its purpose.
+- Added T22 results and test evidence under the repository-level `docs/testing/` folder.
+- Updated the browser cache version for this corrected release.

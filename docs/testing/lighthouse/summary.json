@@ -1,0 +1,26 @@
+[
+  {
+    "name": "dashboard-en",
+    "score": 100,
+    "failed": [],
+    "warnings": []
+  },
+  {
+    "name": "report-ro-mobile",
+    "score": 100,
+    "failed": [],
+    "warnings": []
+  },
+  {
+    "name": "mobile-en",
+    "score": 100,
+    "failed": [],
+    "warnings": []
+  },
+  {
+    "name": "qr",
+    "score": 100,
+    "failed": [],
+    "warnings": []
+  }
+]
