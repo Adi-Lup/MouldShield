@@ -30,7 +30,7 @@ The screenshots named under "Evidence" are kept by the team and are not in the r
 - Step 2: the humidity of reading 3 was changed directly in SQLite, from 66.0% to 40.0%, without touching the hashes. `GET /verify` returned `Tampered`, first_bad_id 3, "reading changed after it was saved".
 - Step 3: the value was put back to 66.0%. `GET /verify` returned OK, with 38 readings checked (new readings kept arriving).
 - Result: the change was found at the exact reading, with no false alarm before or after.
-- The same check is now repeated automatically in `backend/tests/test_tamper_detection.py` (13 tests): the first, a middle and the last reading, the temperature, the time and the device ID, a value changed together with its own hash, a deleted reading and a fake reading. All 10 changes are found. Two known limits are also tested: deleting the newest reading, or calculating every hash again after a change, is not found. MouldShield is tamper-evident, not tamper-proof.
+- The same check is now repeated automatically in `backend/tests/test_tamper_detection.py` (13 tests): the first, a middle and the last reading, the temperature, the time and the device ID, a value changed together with its own hash, a deleted reading and a fake reading. All 9 kinds of change are found at the right reading. Two known limits are also tested: deleting the newest reading, or calculating every hash again after a change, is not found. MouldShield is tamper-evident, not tamper-proof.
 - Evidence: `W3_verify_ok.png`, `W3_tamper_change.png`, `W3_verify_tampered.png`, `W3_verify_restored.png`.
 
 ## M2 · Speed from the device to the database (21 Oct 2026, 11:31 to 11:42 UK time)
