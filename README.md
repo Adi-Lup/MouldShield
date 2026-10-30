@@ -135,12 +135,24 @@ There is no PUT, PATCH or DELETE for readings, on purpose: readings are evidence
 ## How we work
 
 - Tasks live on the GitHub Projects board: To do, In progress, Done. Each feature task has a MoSCoW label (Must or Should) and a Sprint value.
-- The product backlog (user stories, MoSCoW, sprint goals and Definition of Done) is in `docs/agile/product_backlog.md`, and the risk register in `docs/agile/risk_register.md`.
-- We commit straight to `main`. The project is small and we work on different folders, so we do not use branches or pull requests.
+- The product backlog (user stories, MoSCoW, sprint goals and Definition of Done) is in `docs/agile/product_backlog.md`, the Gantt chart and milestones in `docs/agile/gantt.md`, and the risk register in `docs/agile/risk_register.md`.
+- We mostly commit straight to `main`. The project is small and we work on different folders. Review changes can also come as a pull request (for example #28).
 - Commit messages are short and start with the task number, for example `#7 add POST /readings`. This links the commit to the card on the board.
 - When a task is ready, the owner leaves a comment on its issue. One teammate checks the work and answers in the same issue, and then the card moves to Done.
 - A task is Done when the code is on GitHub, tested, and checked by one teammate.
 - Stand-up notes (attendance and decisions), sprint reviews and retrospectives are kept in `docs/standups/`.
+
+## Project documentation by SDLC phase
+
+| Phase | What we did | Where to find it |
+|-------|-------------|------------------|
+| Planning | User stories with MoSCoW, sprint plan, Gantt chart, milestones and risks | `docs/agile/` |
+| Requirements and research | Humidity levels for the risk, persona and the dashboard requirements | `docs/research/T04_humidity_thresholds.md`, `docs/design/`, `dashboard/docs/DASHBOARD_REQUIREMENTS.md` |
+| Design | Architecture, Use Case diagram, Level 0 DFD, wireframes and the database table | `assets/architecture.svg`, `dashboard/diagrams/`, `docs/design/`, `backend/README.md` |
+| Implementation | Device, back-end and dashboard code | `device/`, `backend/`, `dashboard/` |
+| Testing | Automated tests, tests with the real device, security check and the user stories linked to their tests | `docs/testing/`, `docs/security/T21_security_check.md` |
+| Deployment | AWS EC2 server, the two services and HTTPS through CloudFront | `deploy/README.md` |
+| Review and maintenance | Stand-ups, sprint reviews and changes to the backlog | `docs/standups/`, `docs/agile/product_backlog.md` |
 
 ## Security
 
