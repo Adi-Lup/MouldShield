@@ -12,7 +12,7 @@ gantt
 
     section Planning
     T01 Order the hardware              :done, t01, 2026-10-05, 2026-10-11
-    T02 GitHub repository and Scrum board :done, t02, 2026-10-05, 2026-10-11
+    T02 GitHub repository and Scrum board :done, t02, 2026-10-05, 2026-10-12
     T03 AWS set-up and budget alert     :done, t03, 2026-10-05, 2026-10-11
     Plan agreed                         :milestone, m1, 2026-10-11, 0d
 

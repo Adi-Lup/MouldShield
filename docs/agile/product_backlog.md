@@ -1,6 +1,6 @@
 # Product backlog and sprint plan
 
-MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 19 October 2026.
+MouldShield, team THE SHARKS. Kept by the Scrum Master (Adrian). Last updated: 30 October 2026.
 
 The backlog is ordered by value, and we prioritise it with MoSCoW, as we said in our proposal and in Formative 1. The team orders it together (we have no separate Product Owner). It changes when we learn something new, so this file and the Scrum board are updated every week.
 
@@ -28,7 +28,7 @@ Tasks that are not features (planning, documentation, testing and the viva) have
 
 ## Sprints
 
-Each sprint is one week. Stand-ups are in class on Thursday and Friday and on Teams on the other days. At the end of each sprint we hold a short sprint review (what works now) and a retrospective (what went well, what did not, what we change next time), and we write both down in `docs/standups/`.
+Each sprint is one week. Stand-ups are in class on Thursday and Friday and on Teams or WhatsApp on the other days. At the end of each sprint we hold a short sprint review (what works now) and a retrospective (what went well, what did not, what we change next time), and we write both down in `docs/standups/`.
 
 | Sprint | Week | Sprint goal | Sprint backlog |
 |--------|------|-------------|----------------|
@@ -61,3 +61,10 @@ A task is Done when:
 | 19 Oct 2026 | New task T27 "Build the MQTT subscriber (AWS IoT Core to POST /readings)" added to Sprint 2 (Adrian, Must, US1) | The device already sends readings to AWS IoT Core; T27 brings them into the back-end database. Agreed at the Sprint 1 review |
 | 19 Oct 2026 | The device status bar (SYNCED or OFFLINE) is done in Sprint 1, not Sprint 2 | It came together with T11, when the AWS connection was joined with the sensor code |
 | 19 Oct 2026 | The dashboard shows the humidity without decimals and uses the team logo; T10 uses the same limits as the device (MODERATE from 60%, HIGH from 70%) | Team decisions at the Sprint 1 review, so the device and the dashboard show the same values |
+| 22 Oct 2026 | Dashboard (T14 and T19): "Data verified" or "Tampered" badge, language selector on the report page, forecast panel with the outside temperature, 24 hours or 7 days graph, WCAG 2.2 AA as the accessibility target. Two new endpoints for the 7-day readings and the outside temperature, built with T17 | Agreed by the whole team in class (`../standups/2026-10-22.md`) |
+| 23 Oct 2026 | Sprint 2 discussed in class instead of at the online review planned for 25 Oct | All three of us were in class on 23 Oct (`../standups/2026-10-23.md`) |
+| 27 Oct 2026 | T10 (risk level) and T13 (AI report and letter) moved from Sprint 2 to Sprint 3, and Done on 27 Oct | They were not finished by the end of Sprint 2 |
+| 27 Oct 2026 | The dashboard is served by the same FastAPI server on EC2 as the API (T16) | One address for the tenant, HTTPS through CloudFront, and no extra server to pay for |
+| 27 Oct 2026 | AI photo evidence (T18): 15 MB per photo and 20 photos a day | Protects the server and our AWS credit; the 15 MB check was improved after Sergiu's review |
+| 29 Oct 2026 | Slides (T23): new version with an equal part for each of us and fewer changes of speaker | Agreed in class, so the presentation runs without long breaks (`../standups/2026-10-29.md`) |
+| 29 Oct 2026 | Testing (T22) extended with automated tamper tests, the tests with the real device and a table linking every user story to its tests (`../testing/`) | So the test evidence covers the whole system, not only the dashboard |

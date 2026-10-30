@@ -5,5 +5,5 @@ Copy `_template.md`, fill it in, and commit it on the same day.
 
 At the end of each sprint, copy `_sprint_review_template.md` to `YYYY-MM-DD_sprint-N-review.md` for the sprint review and retrospective.
 
-Stand-ups happen in class on Thursday and Friday, and on Teams on the other days.
+Stand-ups happen in class on Thursday and Friday, and on Teams or WhatsApp on the other days.
 The Scrum Master (Adrian) keeps the records.
